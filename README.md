@@ -112,3 +112,7 @@ python3 gplay2.py 1 2     # plays a game through the cursor keys at level 2
 - `gfx.py`: piece sprites and fonts.
 - `sim42.py`: simulator for the instruction subset used, plus the `.raw` encoder.
 - `decode42.py`: `.raw` decoder used for the round-trip check.
+
+## License
+
+MIT. See [LICENSE](LICENSE).
