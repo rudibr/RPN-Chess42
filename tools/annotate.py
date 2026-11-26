@@ -5,6 +5,7 @@ The comments are for reading only; sim42.parse() and the encoder ignore them."""
 import re
 import sys
 import gen3
+from sim42 import encode
 
 COL = 26  # column where comments start
 
@@ -168,6 +169,13 @@ def commented(prog_sym, prog_final):
     return out
 
 
+def numbered(lines, prog):
+    """Free42-style numbering: 0000 { n-Byte Prgm }, then 0001, 0002, ...
+    n = encoded size of the program without its END."""
+    size = len(encode("\n".join(prog))) - len(encode("END"))
+    return [f"0000 {{ {size}-Byte Prgm }}"] + [f"{i:04d} {l}" for i, l in enumerate(lines, 1)]
+
+
 HEADER = [
     "' RPN Chess42 for the SwissMicros DM42 - commented listing",
     "' Two programs: CHESS (engine, new game) and CHCON (graphical UI).",
@@ -180,5 +188,6 @@ HEADER = [
 ]
 
 if __name__ == "__main__":
-    lines = HEADER + commented(gen3.engine, gen3.ENG) + [""] + commented(gen3.ui, gen3.UI)
+    lines = HEADER + numbered(commented(gen3.engine, gen3.ENG), gen3.ENG) + [""] \
+        + numbered(commented(gen3.ui, gen3.UI), gen3.UI)
     open(sys.argv[1] if len(sys.argv) > 1 else "../CHESS_listing.txt", "w").write("\n".join(lines) + "\n")

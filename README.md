@@ -98,7 +98,7 @@ Captures are searched first, ordered by "most valuable victim, least valuable at
 ## Files
 
 - [`CHESS.raw`](CHESS.raw): the program file to load onto the DM42.
-- [`CHESS_listing.txt`](CHESS_listing.txt): the full RPN listing, with comments (starting with `'`) describing each routine, register and flag. Picture data in strings is written as `[xHH]` byte codes (this project's own notation), so load the `.raw` file rather than pasting the listing into an encoder.
+- [`CHESS_listing.txt`](CHESS_listing.txt): the full RPN listing, with Free42-style line numbers (`0000 { n-Byte Prgm }`, then 0001, 0002, ... for each program) and comments (starting with `'`) describing each routine, register and flag. Picture data in strings is written as `[xHH]` byte codes (this project's own notation), so load the `.raw` file rather than pasting the listing into an encoder.
 - [`tools/`](tools): Python sources that generate the program, plus a small HP-42S simulator used for testing.
 
 ## Building and testing

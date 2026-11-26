@@ -54,7 +54,7 @@ def parse(text):
     for raw in text.splitlines():
         line = strip_comment(raw)
         line = re.sub(r'^\d+[▸ ]', '', line).strip()
-        if not line:
+        if not line or line.startswith('{'):
             continue
         cur.append(line)
         if line == 'END':
