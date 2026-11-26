@@ -34,11 +34,25 @@ def chars(body):
 STACKREF = {'ST T': 0x70, 'ST Z': 0x71, 'ST Y': 0x72, 'ST X': 0x73, 'ST L': 0x74}
 
 
+def strip_comment(raw):
+    """Remove a trailing ' comment (and whole-line comments). Quotes inside strings are kept."""
+    s = raw.strip()
+    if s.startswith("'"):
+        return ''
+    in_str = False
+    for i, ch in enumerate(s):
+        if ch == '"':
+            in_str = not in_str
+        elif ch == "'" and not in_str:
+            return s[:i].strip()
+    return s
+
+
 def parse(text):
     progs = []
     cur = []
     for raw in text.splitlines():
-        line = raw.split('@')[0].strip() if not raw.strip().startswith(('"', '├')) else raw.strip()
+        line = strip_comment(raw)
         line = re.sub(r'^\d+[▸ ]', '', line).strip()
         if not line:
             continue

@@ -98,7 +98,7 @@ Captures are searched first, ordered by "most valuable victim, least valuable at
 ## Files
 
 - [`CHESS.raw`](CHESS.raw): the program file to load onto the DM42.
-- [`CHESS_listing.txt`](CHESS_listing.txt): the full RPN listing. Picture data in strings is written as `[xHH]` byte codes (this project's own notation), so load the `.raw` file rather than pasting the listing into an encoder.
+- [`CHESS_listing.txt`](CHESS_listing.txt): the full RPN listing, with comments (starting with `'`) describing each routine, register and flag. Picture data in strings is written as `[xHH]` byte codes (this project's own notation), so load the `.raw` file rather than pasting the listing into an encoder.
 - [`tools/`](tools): Python sources that generate the program, plus a small HP-42S simulator used for testing.
 
 ## Building and testing
@@ -118,6 +118,7 @@ python3 gplay2.py 1 2     # plays a game through the cursor keys at level 2
 - `gfx.py`: piece sprites and fonts.
 - `sim42.py`: simulator for the instruction subset used, plus the `.raw` encoder.
 - `decode42.py`: `.raw` decoder used for the round-trip check.
+- `annotate.py`: writes the commented listing (called by `build.py`).
 - `make_gif.py`: records `demo.gif` (run `python3 gen3.py chess3.txt` first; uses Stockfish for White if installed).
 
 ## License

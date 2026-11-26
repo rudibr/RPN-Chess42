@@ -1,136 +1,144 @@
-LBL "CHESS"
-FS?C 06
-GTO 15
-SIZE 1224
-XEQ 16
-XEQ 19
+' RPN Chess42 for the SwissMicros DM42 - commented listing
+' Two programs: CHESS (engine, new game) and CHCON (graphical UI).
+' Board: R100-R219 (10x12 mailbox, a1 = R121, h8 = R198); piece = side*(type + k/100)
+'   type P1 N2 B3 R4 Q5 K6, k = piece-list slot (R1081-R1112), off-board = 0.5
+' Node records R220-R355, move lists R360-R999, centre table R1001-R1078,
+' small glyphs R1141-R1158, large glyphs R1160-R1223.
+' Strings with picture data use [xHH] for byte HH. Load CHESS.raw rather than this text.
+
+LBL "CHESS"               'new game, or engine service if flag 06 set
+FS?C 06                   'flag: engine service call
+GTO 15                    '-> engine service dispatcher (code in R38)
+SIZE 1224                 'allocate registers
+XEQ 16                    '-> set up constant tables
+XEQ 19                    '-> set up start position
 0
-STO 49
-STO 54
+STO 49                    'UI stage (0 pick piece, 1 pick target)
+STO 54                    'last move (for marks/panel)
 1
-STO 53
+STO 53                    'UI status message number
 125
-STO 83
-SF 07
-GTO "CHCON"
-LBL 15
-RCL 38
+STO 83                    'UI cursor square
+SF 07                     'flag: first run: build tables
+GTO "CHCON"               'start the UI
+LBL 15                    'engine service dispatcher (code in R38)
+RCL 38                    'engine service code
 1
 X=Y?
-GTO 42
+GTO 42                    '-> generate moves at ply 0
 R↓
 2
 X=Y?
-GTO 82
+GTO 82                    '-> make move R21
 R↓
 3
 X=Y?
-GTO 41
+GTO 41                    '-> flag 03 if mover's king is attacked
 R↓
 4
 X=Y?
-GTO E
+GTO E                     '-> undo last move
 R↓
 5
 X=Y?
-GTO 24
+GTO 24                    '-> alpha-beta search from the root
 R↓
 6
 X=Y?
-GTO 43
+GTO 43                    '-> flag 05 if side to move has a legal move
 R↓
 7
 X=Y?
-GTO 40
+GTO 40                    '-> flag 03 if side to move in check
 R↓
 8
 X=Y?
-GTO 00
+GTO 00                    '-> recompute score from scratch
 R↓
 RTN
-LBL 16
+LBL 16                    'set up constant tables
 1
-STO 40
+STO 40                    'direction +1
 +/-
-STO 41
+STO 41                    'direction -1
 10
-STO 42
+STO 42                    'direction +10
 +/-
-STO 43
+STO 43                    'direction -10
 9
-STO 44
+STO 44                    'direction +9
 +/-
-STO 45
+STO 45                    'direction -9
 11
-STO 46
+STO 46                    'direction +11
 +/-
-STO 47
+STO 47                    'direction -11
 0
-STO 48
-STO 94
-STO 99
+STO 48                    'end of direction list (0)
+STO 94                    'end of knight list (0)
+STO 99                    'end of rook list (0)
 8
-STO 86
+STO 86                    'knight jump +8
 +/-
-STO 87
+STO 87                    'knight jump -8
 12
-STO 88
+STO 88                    'knight jump +12
 +/-
-STO 89
+STO 89                    'knight jump -12
 19
-STO 90
+STO 90                    'knight jump +19
 +/-
-STO 91
+STO 91                    'knight jump -19
 21
-STO 92
+STO 92                    'knight jump +21
 +/-
-STO 93
+STO 93                    'knight jump -21
 1
-STO 95
+STO 95                    'rook direction +1
 +/-
-STO 96
+STO 96                    'rook direction -1
 10
-STO 97
+STO 97                    'rook direction +10
 +/-
-STO 98
+STO 98                    'rook direction -10
 100
-STO 70
+STO 70                    'value pawn
 300
-STO 71
+STO 71                    'value knight
 320
-STO 72
+STO 72                    'value bishop
 500
-STO 73
+STO 73                    'value rook
 900
-STO 74
+STO 74                    'value queen
 0
-STO 75
-STO 76
-STO 79
+STO 75                    'value king
+STO 76                    'centre weight pawn
+STO 79                    'centre weight rook
 4
-STO 77
+STO 77                    'centre weight knight
 2
-STO 78
+STO 78                    'centre weight bishop
 1
-STO 80
+STO 80                    'centre weight queen
 4
 +/-
-STO 81
+STO 81                    'centre weight king
 2
-STO 33
+STO 33                    'level (search depth)
 1
-STO 00
-LBL 17
+STO 00                    'temp / PST piece
+LBL 17                    'centre table: rank loop
 1
-STO 01
-LBL 18
-RCL 01
+STO 01                    'temp / PST square
+LBL 18                    'centre table: file loop
+RCL 01                    'temp / PST square
 2
 ×
 9
 -
 ABS
-RCL 00
+RCL 00                    'temp / PST piece
 2
 ×
 9
@@ -142,103 +150,103 @@ ABS
 7
 X<>Y
 -
-RCL 00
+RCL 00                    'temp / PST piece
 10
 ×
-RCL 01
+RCL 01                    'temp / PST square
 +
 990
 +
 X<>Y
 STO IND ST Y
 1
-STO+ 01
-RCL 01
+STO+ 01                   'temp / PST square
+RCL 01                    'temp / PST square
 9
 X≠Y?
-GTO 18
+GTO 18                    '-> centre table: file loop
 1
-STO+ 00
-RCL 00
+STO+ 00                   'temp / PST piece
+RCL 00                    'temp / PST piece
 9
 X≠Y?
-GTO 17
+GTO 17                    '-> centre table: rank loop
 RTN
-LBL 19
+LBL 19                    'set up start position
 100
-STO 03
-LBL 20
+STO 03                    'temp / pointer
+LBL 20                    'mark all squares off-board
 0.5
 STO IND 03
 1
-STO+ 03
-RCL 03
+STO+ 03                   'temp / pointer
+RCL 03                    'temp / pointer
 220
 X≠Y?
-GTO 20
+GTO 20                    '-> mark all squares off-board
 1
-STO 00
-LBL 21
+STO 00                    'temp / PST piece
+LBL 21                    'clear board: rank loop
 1
-STO 01
-LBL 22
-RCL 00
+STO 01                    'temp / PST square
+LBL 22                    'clear board: file loop
+RCL 00                    'temp / PST piece
 10
 ×
-RCL 01
+RCL 01                    'temp / PST square
 +
 110
 +
-STO 03
+STO 03                    'temp / pointer
 0
 STO IND 03
 1
-STO+ 01
-RCL 01
+STO+ 01                   'temp / PST square
+RCL 01                    'temp / PST square
 9
 X≠Y?
-GTO 22
+GTO 22                    '-> clear board: file loop
 1
-STO+ 00
-RCL 00
+STO+ 00                   'temp / PST piece
+RCL 00                    'temp / PST piece
 9
 X≠Y?
-GTO 21
+GTO 21                    '-> clear board: rank loop
 42356324
-STO 04
+STO 04                    'temp
 8
-STO 01
-LBL 23
-RCL 04
+STO 01                    'temp / PST square
+LBL 23                    'place pieces, file by file
+RCL 04                    'temp
 10
 MOD
-STO 02
-RCL 04
+STO 02                    'temp
+RCL 04                    'temp
 10
 ÷
 IP
-STO 04
-RCL 01
+STO 04                    'temp
+RCL 01                    'temp / PST square
 120
 +
-STO 03
-RCL 01
+STO 03                    'temp / pointer
+RCL 01                    'temp / PST square
 100
 ÷
-RCL 02
+RCL 02                    'temp
 +
 STO IND 03
-RCL 01
+RCL 01                    'temp / PST square
 1080
 +
-STO 13
-RCL 03
+STO 13                    'temp / sprite code / capture key
+RCL 03                    'temp / pointer
 STO IND 13
-RCL 01
+RCL 01                    'temp / PST square
 130
 +
-STO 03
-RCL 01
+STO 03                    'temp / pointer
+RCL 01                    'temp / PST square
 8
 +
 100
@@ -246,36 +254,36 @@ RCL 01
 1
 +
 STO IND 03
-RCL 01
+RCL 01                    'temp / PST square
 1088
 +
-STO 13
-RCL 03
+STO 13                    'temp / sprite code / capture key
+RCL 03                    'temp / pointer
 STO IND 13
-RCL 01
+RCL 01                    'temp / PST square
 190
 +
-STO 03
-RCL 01
+STO 03                    'temp / pointer
+RCL 01                    'temp / PST square
 16
 +
 100
 ÷
-RCL 02
+RCL 02                    'temp
 +
 +/-
 STO IND 03
-RCL 01
+RCL 01                    'temp / PST square
 1096
 +
-STO 13
-RCL 03
+STO 13                    'temp / sprite code / capture key
+RCL 03                    'temp / pointer
 STO IND 13
-RCL 01
+RCL 01                    'temp / PST square
 180
 +
-STO 03
-RCL 01
+STO 03                    'temp / pointer
+RCL 01                    'temp / PST square
 24
 +
 100
@@ -284,124 +292,124 @@ RCL 01
 +
 +/-
 STO IND 03
-RCL 01
+RCL 01                    'temp / PST square
 1104
 +
-STO 13
-RCL 03
+STO 13                    'temp / sprite code / capture key
+RCL 03                    'temp / pointer
 STO IND 13
 1
-STO- 01
-RCL 01
+STO- 01                   'temp / PST square
+RCL 01                    'temp / PST square
 X≠0?
-GTO 23
+GTO 23                    '-> place pieces, file by file
 1
-STO 05
+STO 05                    'side to move (+1 White, -1 Black)
 0
-STO 06
-STO 07
-STO 31
+STO 06                    'score, White's view
+STO 07                    'en-passant square
+STO 31                    'best root move
 15
-STO 08
+STO 08                    'castling rights (1 WK, 2 WQ, 4 BK, 8 BQ)
 125
-STO 09
+STO 09                    'white king square
 195
-STO 10
+STO 10                    'black king square
 RTN
-LBL 24
+LBL 24                    'alpha-beta search from the root
 0
-STO 11
-STO 31
-STO 36
+STO 11                    'ply (search depth so far)
+STO 31                    'best root move
+STO 36                    'node counter
 30000
-STO 15
+STO 15                    'beta
 +/-
-STO 14
-RCL 33
-STO 17
-LBL 25
+STO 14                    'alpha
+RCL 33                    'level (search depth)
+STO 17                    'remaining depth
+LBL 25                    'enter node
 1
-STO+ 36
-RCL 11
+STO+ 36                   'node counter
+RCL 11                    'ply (search depth so far)
 80
 ×
 360
 +
-STO 30
-RCL 17
+STO 30                    'move-list base for this ply
+RCL 17                    'remaining depth
 X>0?
-GTO 26
-SF 01
-RCL 06
-RCL 05
+GTO 26                    '-> full-width node
+SF 01                     'flag: quiescence (captures only)
+RCL 06                    'score, White's view
+RCL 05                    'side to move (+1 White, -1 Black)
 ×
-STO 16
-STO 35
-RCL 11
-RCL 33
+STO 16                    'best score at this node
+STO 35                    'value returned to parent
+RCL 11                    'ply (search depth so far)
+RCL 33                    'level (search depth)
 4
 +
 X≤Y?
-GTO 34
-RCL 16
-RCL 15
+GTO 34                    '-> return value to parent
+RCL 16                    'best score at this node
+RCL 15                    'beta
 X≤Y?
-GTO 34
-RCL 14
-RCL 16
+GTO 34                    '-> return value to parent
+RCL 14                    'alpha
+RCL 16                    'best score at this node
 X>Y?
-STO 14
-GTO 27
-LBL 26
-CF 01
+STO 14                    'alpha
+GTO 27                    '-> generate moves for node
+LBL 26                    'full-width node
+CF 01                     'flag: quiescence (captures only)
 20000
 +/-
-STO 16
-LBL 27
-XEQ 46
-FS? 02
-GTO 33
-RCL 30
-STO 18
-LBL 28
-RCL 18
-RCL 19
+STO 16                    'best score at this node
+LBL 27                    'generate moves for node
+XEQ 46                    '-> generate pseudo-legal moves
+FS? 02                    'flag: king can be captured
+GTO 33                    '-> king capturable: last move illegal
+RCL 30                    'move-list base for this ply
+STO 18                    'move-list index
+LBL 28                    'next move
+RCL 18                    'move-list index
+RCL 19                    'end of captures in list
 X≠Y?
-GTO 29
-RCL 20
-STO 18
-LBL 29
-RCL 30
+GTO 29                    '-> end of move list?
+RCL 20                    'start of quiet moves in list
+STO 18                    'move-list index
+LBL 29                    'end of move list?
+RCL 30                    'move-list base for this ply
 80
 +
-RCL 18
+RCL 18                    'move-list index
 X=Y?
-GTO 37
+GTO 37                    '-> node finished
 RCL IND ST X
-STO 13
-RCL 17
+STO 13                    'temp / sprite code / capture key
+RCL 17                    'remaining depth
 X>0?
-GTO 32
-RCL 13
+GTO 32                    '-> make move, go one ply deeper
+RCL 13                    'temp / sprite code / capture key
 10000000
 ÷
 IP
 69
 +
-STO 39
+STO 39                    'temp square
 RCL IND 39
-RCL 06
-RCL 05
+RCL 06                    'score, White's view
+RCL 05                    'side to move (+1 White, -1 Black)
 ×
 +
 200
 +
-RCL 14
+RCL 14                    'alpha
 X<Y?
-GTO 30
-GTO 37
-LBL 30
-RCL 13
+GTO 30                    '-> losing-looking capture?
+GTO 37                    '-> node finished
+LBL 30                    'losing-looking capture?
+RCL 13                    'temp / sprite code / capture key
 1000000
 ÷
 IP
@@ -412,334 +420,334 @@ X<>Y
 -
 69
 +
-STO 39
+STO 39                    'temp square
 RCL IND 39
-RCL 13
+RCL 13                    'temp / sprite code / capture key
 10000000
 ÷
 IP
 69
 +
-STO 39
+STO 39                    'temp square
 RCL IND 39
 50
 +
 X<Y?
-GTO 31
-GTO 32
-LBL 31
-RCL 13
+GTO 31                    '-> skip it if target is defended
+GTO 32                    '-> make move, go one ply deeper
+LBL 31                    'skip it if target is defended
+RCL 13                    'temp / sprite code / capture key
 1000
 MOD
-STO 63
-RCL 05
+STO 63                    'attack test: square
+RCL 05                    'side to move (+1 White, -1 Black)
 +/-
-STO 64
-XEQ 77
-FS? 03
-GTO 28
-LBL 32
-RCL 13
+STO 64                    'attack test: attacking side
+XEQ 77                    '-> flag 03 if square R63 attacked by side R64
+FS? 03                    'flag: square attacked / in check
+GTO 28                    '-> next move
+LBL 32                    'make move, go one ply deeper
+RCL 13                    'temp / sprite code / capture key
 1000000
 MOD
-STO 21
+STO 21                    'current move (from*1000+to)
 1
-STO+ 18
-XEQ 82
-XEQ 38
-RCL 15
+STO+ 18                   'move-list index
+XEQ 82                    '-> make move R21
+XEQ 38                    '-> save node record for this ply
+RCL 15                    'beta
 +/-
-RCL 14
+RCL 14                    'alpha
 +/-
-STO 15
+STO 15                    'beta
 R↓
-STO 14
+STO 14                    'alpha
 1
-STO- 17
-STO+ 11
-GTO 25
-LBL 33
+STO- 17                   'remaining depth
+STO+ 11                   'ply (search depth so far)
+GTO 25                    '-> enter node
+LBL 33                    'king capturable: last move illegal
 10000
-STO 35
-LBL 34
-RCL 11
+STO 35                    'value returned to parent
+LBL 34                    'return value to parent
+RCL 11                    'ply (search depth so far)
 X=0?
 RTN
 1
-STO- 11
-XEQ 39
-XEQ E
-RCL 35
+STO- 11                   'ply (search depth so far)
+XEQ 39                    '-> restore node record for this ply
+XEQ E                     '-> undo last move
+RCL 35                    'value returned to parent
 +/-
-RCL 16
+RCL 16                    'best score at this node
 X<Y?
-GTO 35
-GTO 36
-LBL 35
+GTO 35                    '-> new best move
+GTO 36                    '-> raise alpha, test cutoff
+LBL 35                    'new best move
 X<>Y
-STO 16
-RCL 11
+STO 16                    'best score at this node
+RCL 11                    'ply (search depth so far)
 X≠0?
-GTO 36
-RCL 21
-STO 31
-LBL 36
-RCL 14
-RCL 35
+GTO 36                    '-> raise alpha, test cutoff
+RCL 21                    'current move (from*1000+to)
+STO 31                    'best root move
+LBL 36                    'raise alpha, test cutoff
+RCL 14                    'alpha
+RCL 35                    'value returned to parent
 +/-
 X>Y?
-STO 14
-RCL 15
-RCL 14
+STO 14                    'alpha
+RCL 15                    'beta
+RCL 14                    'alpha
 X<Y?
-GTO 28
-LBL 37
-RCL 16
-STO 35
-RCL 17
+GTO 28                    '-> next move
+LBL 37                    'node finished
+RCL 16                    'best score at this node
+STO 35                    'value returned to parent
+RCL 17                    'remaining depth
 X≤0?
-GTO 34
-RCL 16
+GTO 34                    '-> return value to parent
+RCL 16                    'best score at this node
 10000
 +/-
 X<Y?
-GTO 34
+GTO 34                    '-> return value to parent
 0
-STO 35
-RCL 11
+STO 35                    'value returned to parent
+RCL 11                    'ply (search depth so far)
 X=0?
-STO 31
-XEQ 40
-FC? 03
-GTO 34
-RCL 11
+STO 31                    'best root move
+XEQ 40                    '-> flag 03 if side to move in check
+FC? 03                    'flag: square attacked / in check
+GTO 34                    '-> return value to parent
+RCL 11                    'ply (search depth so far)
 9000
 -
-STO 35
-GTO 34
-LBL 38
-RCL 11
+STO 35                    'value returned to parent
+GTO 34                    '-> return value to parent
+LBL 38                    'save node record for this ply
+RCL 11                    'ply (search depth so far)
 17
 ×
 220
 +
-STO 12
-RCL 14
+STO 12                    'pointer
+RCL 14                    'alpha
 STO IND 12
 1
-STO+ 12
-RCL 15
+STO+ 12                   'pointer
+RCL 15                    'beta
 STO IND 12
 1
-STO+ 12
-RCL 16
+STO+ 12                   'pointer
+RCL 16                    'best score at this node
 STO IND 12
 1
-STO+ 12
-RCL 17
+STO+ 12                   'pointer
+RCL 17                    'remaining depth
 STO IND 12
 1
-STO+ 12
-RCL 18
+STO+ 12                   'pointer
+RCL 18                    'move-list index
 STO IND 12
 1
-STO+ 12
-RCL 19
+STO+ 12                   'pointer
+RCL 19                    'end of captures in list
 STO IND 12
 1
-STO+ 12
-RCL 20
+STO+ 12                   'pointer
+RCL 20                    'start of quiet moves in list
 STO IND 12
 1
-STO+ 12
-RCL 21
+STO+ 12                   'pointer
+RCL 21                    'current move (from*1000+to)
 STO IND 12
 1
-STO+ 12
-RCL 22
+STO+ 12                   'pointer
+RCL 22                    'move: from square
 STO IND 12
 1
-STO+ 12
-RCL 23
+STO+ 12                   'pointer
+RCL 23                    'move: to square
 STO IND 12
 1
-STO+ 12
-RCL 24
+STO+ 12                   'pointer
+RCL 24                    'move: moving piece
 STO IND 12
 1
-STO+ 12
-RCL 25
+STO+ 12                   'pointer
+RCL 25                    'move: captured piece
 STO IND 12
 1
-STO+ 12
-RCL 26
+STO+ 12                   'pointer
+RCL 26                    'undo: old en-passant square
 STO IND 12
 1
-STO+ 12
-RCL 27
+STO+ 12                   'pointer
+RCL 27                    'undo: old castling rights
 STO IND 12
 1
-STO+ 12
-RCL 28
+STO+ 12                   'pointer
+RCL 28                    'undo: old score
 STO IND 12
 1
-STO+ 12
-RCL 29
+STO+ 12                   'pointer
+RCL 29                    'move type (1 e.p., 2 castle)
 STO IND 12
 1
-STO+ 12
-RCL 30
+STO+ 12                   'pointer
+RCL 30                    'move-list base for this ply
 STO IND 12
 1
-STO+ 12
+STO+ 12                   'pointer
 RTN
-LBL 39
-RCL 11
+LBL 39                    'restore node record for this ply
+RCL 11                    'ply (search depth so far)
 17
 ×
 220
 +
-STO 12
+STO 12                    'pointer
 RCL IND 12
-STO 14
+STO 14                    'alpha
 1
-STO+ 12
+STO+ 12                   'pointer
 RCL IND 12
-STO 15
+STO 15                    'beta
 1
-STO+ 12
+STO+ 12                   'pointer
 RCL IND 12
-STO 16
+STO 16                    'best score at this node
 1
-STO+ 12
+STO+ 12                   'pointer
 RCL IND 12
-STO 17
+STO 17                    'remaining depth
 1
-STO+ 12
+STO+ 12                   'pointer
 RCL IND 12
-STO 18
+STO 18                    'move-list index
 1
-STO+ 12
+STO+ 12                   'pointer
 RCL IND 12
-STO 19
+STO 19                    'end of captures in list
 1
-STO+ 12
+STO+ 12                   'pointer
 RCL IND 12
-STO 20
+STO 20                    'start of quiet moves in list
 1
-STO+ 12
+STO+ 12                   'pointer
 RCL IND 12
-STO 21
+STO 21                    'current move (from*1000+to)
 1
-STO+ 12
+STO+ 12                   'pointer
 RCL IND 12
-STO 22
+STO 22                    'move: from square
 1
-STO+ 12
+STO+ 12                   'pointer
 RCL IND 12
-STO 23
+STO 23                    'move: to square
 1
-STO+ 12
+STO+ 12                   'pointer
 RCL IND 12
-STO 24
+STO 24                    'move: moving piece
 1
-STO+ 12
+STO+ 12                   'pointer
 RCL IND 12
-STO 25
+STO 25                    'move: captured piece
 1
-STO+ 12
+STO+ 12                   'pointer
 RCL IND 12
-STO 26
+STO 26                    'undo: old en-passant square
 1
-STO+ 12
+STO+ 12                   'pointer
 RCL IND 12
-STO 27
+STO 27                    'undo: old castling rights
 1
-STO+ 12
+STO+ 12                   'pointer
 RCL IND 12
-STO 28
+STO 28                    'undo: old score
 1
-STO+ 12
+STO+ 12                   'pointer
 RCL IND 12
-STO 29
+STO 29                    'move type (1 e.p., 2 castle)
 1
-STO+ 12
+STO+ 12                   'pointer
 RCL IND 12
-STO 30
+STO 30                    'move-list base for this ply
 1
-STO+ 12
+STO+ 12                   'pointer
 RTN
-LBL 40
+LBL 40                    'flag 03 if side to move in check
 19
-RCL 05
+RCL 05                    'side to move (+1 White, -1 Black)
 -
 2
 ÷
 RCL IND ST X
-STO 63
-RCL 05
+STO 63                    'attack test: square
+RCL 05                    'side to move (+1 White, -1 Black)
 +/-
-STO 64
-GTO 77
-LBL 41
-RCL 05
+STO 64                    'attack test: attacking side
+GTO 77                    '-> flag 03 if square R63 attacked by side R64
+LBL 41                    'flag 03 if mover's king is attacked
+RCL 05                    'side to move (+1 White, -1 Black)
 19
 +
 2
 ÷
 RCL IND ST X
-STO 63
-RCL 05
-STO 64
-GTO 77
-LBL 42
+STO 63                    'attack test: square
+RCL 05                    'side to move (+1 White, -1 Black)
+STO 64                    'attack test: attacking side
+GTO 77                    '-> flag 03 if square R63 attacked by side R64
+LBL 42                    'generate moves at ply 0
 0
-STO 11
+STO 11                    'ply (search depth so far)
 360
-STO 30
-CF 01
-GTO 46
-LBL 43
-CF 05
-XEQ 42
-RCL 30
-STO 18
-LBL 44
-RCL 18
-RCL 19
+STO 30                    'move-list base for this ply
+CF 01                     'flag: quiescence (captures only)
+GTO 46                    '-> generate pseudo-legal moves
+LBL 43                    'flag 05 if side to move has a legal move
+CF 05                     'flag: side to move has a legal move
+XEQ 42                    '-> generate moves at ply 0
+RCL 30                    'move-list base for this ply
+STO 18                    'move-list index
+LBL 44                    'next move
+RCL 18                    'move-list index
+RCL 19                    'end of captures in list
 X≠Y?
-GTO 45
-RCL 20
-STO 18
-LBL 45
-RCL 30
+GTO 45                    '-> end of move list?
+RCL 20                    'start of quiet moves in list
+STO 18                    'move-list index
+LBL 45                    'end of move list?
+RCL 30                    'move-list base for this ply
 80
 +
-RCL 18
+RCL 18                    'move-list index
 X=Y?
 RTN
 RCL IND ST X
 1000000
 MOD
-STO 21
+STO 21                    'current move (from*1000+to)
 1
-STO+ 18
-XEQ 82
-XEQ 41
-XEQ E
-FC? 03
-SF 05
-FS? 05
+STO+ 18                   'move-list index
+XEQ 82                    '-> make move R21
+XEQ 41                    '-> flag 03 if mover's king is attacked
+XEQ E                     '-> undo last move
+FC? 03                    'flag: square attacked / in check
+SF 05                     'flag: side to move has a legal move
+FS? 05                    'flag: side to move has a legal move
 RTN
-GTO 44
-LBL 46
-CF 02
-RCL 30
-STO 19
+GTO 44                    '-> next move
+LBL 46                    'generate pseudo-legal moves
+CF 02                     'flag: king can be captured
+RCL 30                    'move-list base for this ply
+STO 19                    'end of captures in list
 80
 +
-STO 20
-RCL 05
+STO 20                    'start of quiet moves in list
+RCL 05                    'side to move (+1 White, -1 Black)
 8
 ×
 9
@@ -747,339 +755,339 @@ X<>Y
 -
 1080
 +
-STO 61
+STO 61                    'movegen: piece-list pointer
 16
 +
-STO 62
-LBL 47
-RCL 62
-RCL 61
+STO 62                    'movegen: piece-list end
+LBL 47                    'next piece in piece list
+RCL 62                    'movegen: piece-list end
+RCL 61                    'movegen: piece-list pointer
 X=Y?
 RTN
 RCL IND ST X
 1
-STO+ 61
+STO+ 61                   'movegen: piece-list pointer
 R↓
 X=0?
-GTO 47
-STO 56
+GTO 47                    '-> next piece in piece list
+STO 56                    'movegen: from square
 RCL IND ST X
 ABS
 IP
-STO 82
+STO 82                    'movegen: moving piece type
 3
 X>Y?
-GTO 48
+GTO 48                    '-> pawn or knight
 X=Y?
-GTO 50
+GTO 50                    '-> bishop
 R↓
 5
 X>Y?
-GTO 51
+GTO 51                    '-> rook
 X=Y?
-GTO 52
-XEQ 64
-GTO 53
-LBL 48
+GTO 52                    '-> queen
+XEQ 64                    '-> king moves
+GTO 53                    '-> piece done
+LBL 48                    'pawn or knight
 R↓
 1
 X=Y?
-GTO 49
-XEQ 60
-GTO 53
-LBL 49
-XEQ 54
-GTO 53
-LBL 50
-XEQ 61
-GTO 53
-LBL 51
-XEQ 62
-GTO 53
-LBL 52
-XEQ 63
-LBL 53
-FS? 02
+GTO 49                    '-> pawn
+XEQ 60                    '-> knight moves
+GTO 53                    '-> piece done
+LBL 49                    'pawn
+XEQ 54                    '-> pawn moves
+GTO 53                    '-> piece done
+LBL 50                    'bishop
+XEQ 61                    '-> bishop moves
+GTO 53                    '-> piece done
+LBL 51                    'rook
+XEQ 62                    '-> rook moves
+GTO 53                    '-> piece done
+LBL 52                    'queen
+XEQ 63                    '-> queen moves
+LBL 53                    'piece done
+FS? 02                    'flag: king can be captured
 RTN
-GTO 47
-LBL 54
-RCL 05
+GTO 47                    '-> next piece in piece list
+LBL 54                    'pawn moves
+RCL 05                    'side to move (+1 White, -1 Black)
 10
 ×
-STO 68
-RCL 56
+STO 68                    'pawn step (+10/-10)
+RCL 56                    'movegen: from square
 +
-STO 59
+STO 59                    'movegen: target square
 RCL IND 59
 X≠0?
-GTO 55
-XEQ 58
-RCL 56
+GTO 55                    '-> pawn captures
+XEQ 58                    '-> pawn push (promotion to capture list)
+RCL 56                    'movegen: from square
 10
 ÷
 IP
-RCL 05
+RCL 05                    'side to move (+1 White, -1 Black)
 2.5
 ×
 15.5
 X<>Y
 -
 X≠Y?
-GTO 55
-RCL 68
-STO+ 59
+GTO 55                    '-> pawn captures
+RCL 68                    'pawn step (+10/-10)
+STO+ 59                   'movegen: target square
 RCL IND 59
 X=0?
-XEQ 65
-LBL 55
-RCL 56
-RCL 68
+XEQ 65                    '-> add quiet move
+LBL 55                    'pawn captures
+RCL 56                    'movegen: from square
+RCL 68                    'pawn step (+10/-10)
 +
 1
 -
-XEQ 56
-FS? 02
+XEQ 56                    '-> pawn capture towards square X
+FS? 02                    'flag: king can be captured
 RTN
-RCL 56
-RCL 68
+RCL 56                    'movegen: from square
+RCL 68                    'pawn step (+10/-10)
 +
 1
 +
-LBL 56
-STO 59
-RCL 07
+LBL 56                    'pawn capture towards square X
+STO 59                    'movegen: target square
+RCL 07                    'en-passant square
 X=Y?
-GTO 57
+GTO 57                    '-> en-passant capture
 RCL IND 59
-RCL 05
+RCL 05                    'side to move (+1 White, -1 Black)
 ×
 X<0?
-GTO 69
+GTO 69                    '-> occupied target: capture?
 RTN
-LBL 57
+LBL 57                    'en-passant capture
 1
-STO 13
-GTO 66
-LBL 58
-RCL 59
+STO 13                    'temp / sprite code / capture key
+GTO 66                    '-> add capture, sorted MVV/LVA
+LBL 58                    'pawn push (promotion to capture list)
+RCL 59                    'movegen: target square
 190
 X<Y?
-GTO 59
-RCL 59
+GTO 59                    '-> promotion
+RCL 59                    'movegen: target square
 130
 X>Y?
-GTO 59
-GTO 65
-LBL 59
+GTO 59                    '-> promotion
+GTO 65                    '-> add quiet move
+LBL 59                    'promotion
 5
-STO 13
-GTO 66
-LBL 60
+STO 13                    'temp / sprite code / capture key
+GTO 66                    '-> add capture, sorted MVV/LVA
+LBL 60                    'knight moves
 86
-STO 57
-GTO 73
-LBL 61
+STO 57                    'movegen: direction pointer
+GTO 73                    '-> stepper: next direction
+LBL 61                    'bishop moves
 44
-STO 57
-GTO 70
-LBL 62
+STO 57                    'movegen: direction pointer
+GTO 70                    '-> slider: next direction
+LBL 62                    'rook moves
 95
-STO 57
-GTO 70
-LBL 63
+STO 57                    'movegen: direction pointer
+GTO 70                    '-> slider: next direction
+LBL 63                    'queen moves
 40
-STO 57
-GTO 70
-LBL 64
+STO 57                    'movegen: direction pointer
+GTO 70                    '-> slider: next direction
+LBL 64                    'king moves
 40
-STO 57
-XEQ 73
-FS? 02
+STO 57                    'movegen: direction pointer
+XEQ 73                    '-> stepper: next direction
+FS? 02                    'flag: king can be captured
 RTN
-FS? 01
+FS? 01                    'flag: quiescence (captures only)
 RTN
-RCL 08
+RCL 08                    'castling rights (1 WK, 2 WQ, 4 BK, 8 BQ)
 X=0?
 RTN
-GTO 75
-LBL 65
-FS? 01
+GTO 75                    '-> castling, king side
+LBL 65                    'add quiet move
+FS? 01                    'flag: quiescence (captures only)
 RTN
-RCL 20
-RCL 19
+RCL 20                    'start of quiet moves in list
+RCL 19                    'end of captures in list
 X=Y?
 RTN
 1
-STO- 20
-RCL 56
+STO- 20                   'start of quiet moves in list
+RCL 56                    'movegen: from square
 1000
 ×
-RCL 59
+RCL 59                    'movegen: target square
 +
 STO IND 20
 RTN
-LBL 66
-RCL 20
-RCL 19
+LBL 66                    'add capture, sorted MVV/LVA
+RCL 20                    'start of quiet moves in list
+RCL 19                    'end of captures in list
 X=Y?
 RTN
-RCL 13
+RCL 13                    'temp / sprite code / capture key
 10
 ×
 7
 +
-RCL 82
+RCL 82                    'movegen: moving piece type
 -
 1000000
 ×
-RCL 56
+RCL 56                    'movegen: from square
 1000
 ×
 +
-RCL 59
+RCL 59                    'movegen: target square
 +
-STO 13
-RCL 19
-STO 39
-LBL 67
-RCL 39
-RCL 30
+STO 13                    'temp / sprite code / capture key
+RCL 19                    'end of captures in list
+STO 39                    'temp square
+LBL 67                    'insertion-sort step
+RCL 39                    'temp square
+RCL 30                    'move-list base for this ply
 X=Y?
-GTO 68
-RCL 39
+GTO 68                    '-> store capture
+RCL 39                    'temp square
 1
 -
 RCL IND ST X
-RCL 13
+RCL 13                    'temp / sprite code / capture key
 X≤Y?
-GTO 68
+GTO 68                    '-> store capture
 R↓
 STO IND 39
 1
-STO- 39
-GTO 67
-LBL 68
-RCL 13
+STO- 39                   'temp square
+GTO 67                    '-> insertion-sort step
+LBL 68                    'store capture
+RCL 13                    'temp / sprite code / capture key
 STO IND 39
 1
-STO+ 19
+STO+ 19                   'end of captures in list
 RTN
-LBL 69
+LBL 69                    'occupied target: capture?
 ABS
 IP
 X=0?
 RTN
 6
 X=Y?
-SF 02
-FS? 02
+SF 02                     'flag: king can be captured
+FS? 02                    'flag: king can be captured
 RTN
 R↓
-STO 13
-GTO 66
-LBL 70
+STO 13                    'temp / sprite code / capture key
+GTO 66                    '-> add capture, sorted MVV/LVA
+LBL 70                    'slider: next direction
 RCL IND 57
 X=0?
 RTN
-STO 60
+STO 60                    'movegen: direction
 1
-STO+ 57
-RCL 56
-STO 59
-LBL 71
-RCL 60
-STO+ 59
+STO+ 57                   'movegen: direction pointer
+RCL 56                    'movegen: from square
+STO 59                    'movegen: target square
+LBL 71                    'slider: next square on ray
+RCL 60                    'movegen: direction
+STO+ 59                   'movegen: target square
 RCL IND 59
 X≠0?
-GTO 72
-FC? 01
-XEQ 65
-GTO 71
-LBL 72
-RCL 05
+GTO 72                    '-> slider: ray blocked
+FC? 01                    'flag: quiescence (captures only)
+XEQ 65                    '-> add quiet move
+GTO 71                    '-> slider: next square on ray
+LBL 72                    'slider: ray blocked
+RCL 05                    'side to move (+1 White, -1 Black)
 ×
 X>0?
-GTO 70
-XEQ 69
-FS? 02
+GTO 70                    '-> slider: next direction
+XEQ 69                    '-> occupied target: capture?
+FS? 02                    'flag: king can be captured
 RTN
-GTO 70
-LBL 73
+GTO 70                    '-> slider: next direction
+LBL 73                    'stepper: next direction
 RCL IND 57
 X=0?
 RTN
 1
-STO+ 57
+STO+ 57                   'movegen: direction pointer
 R↓
-RCL 56
+RCL 56                    'movegen: from square
 +
-STO 59
+STO 59                    'movegen: target square
 RCL IND 59
 X=0?
-GTO 74
-RCL 05
+GTO 74                    '-> stepper: empty square
+RCL 05                    'side to move (+1 White, -1 Black)
 ×
 X>0?
-GTO 73
-XEQ 69
-FS? 02
+GTO 73                    '-> stepper: next direction
+XEQ 69                    '-> occupied target: capture?
+FS? 02                    'flag: king can be captured
 RTN
-GTO 73
-LBL 74
-FC? 01
-XEQ 65
-GTO 73
-LBL 75
-RCL 05
+GTO 73                    '-> stepper: next direction
+LBL 74                    'stepper: empty square
+FC? 01                    'flag: quiescence (captures only)
+XEQ 65                    '-> add quiet move
+GTO 73                    '-> stepper: next direction
+LBL 75                    'castling, king side
+RCL 05                    'side to move (+1 White, -1 Black)
 1.5
 ×
 2.5
 X<>Y
 -
-STO 39
-RCL 08
+STO 39                    'temp square
+RCL 08                    'castling rights (1 WK, 2 WQ, 4 BK, 8 BQ)
 X<>Y
 ÷
 IP
 2
 MOD
 X=0?
-GTO 76
-RCL 56
+GTO 76                    '-> castling, queen side
+RCL 56                    'movegen: from square
 1
 +
 RCL IND ST X
 X≠0?
-GTO 76
-RCL 56
+GTO 76                    '-> castling, queen side
+RCL 56                    'movegen: from square
 2
 +
 RCL IND ST X
 X≠0?
-GTO 76
-RCL 05
+GTO 76                    '-> castling, queen side
+RCL 05                    'side to move (+1 White, -1 Black)
 +/-
-STO 64
-RCL 56
-STO 63
-XEQ 77
-FS? 03
+STO 64                    'attack test: attacking side
+RCL 56                    'movegen: from square
+STO 63                    'attack test: square
+XEQ 77                    '-> flag 03 if square R63 attacked by side R64
+FS? 03                    'flag: square attacked / in check
 RTN
-RCL 56
+RCL 56                    'movegen: from square
 1
 +
-STO 63
-XEQ 77
-FS? 03
-GTO 76
-RCL 56
+STO 63                    'attack test: square
+XEQ 77                    '-> flag 03 if square R63 attacked by side R64
+FS? 03                    'flag: square attacked / in check
+GTO 76                    '-> castling, queen side
+RCL 56                    'movegen: from square
 2
 +
-STO 59
-XEQ 65
-LBL 76
-RCL 08
-RCL 39
+STO 59                    'movegen: target square
+XEQ 65                    '-> add quiet move
+LBL 76                    'castling, queen side
+RCL 08                    'castling rights (1 WK, 2 WQ, 4 BK, 8 BQ)
+RCL 39                    'temp square
 2
 ×
 ÷
@@ -1088,339 +1096,339 @@ IP
 MOD
 X=0?
 RTN
-RCL 56
+RCL 56                    'movegen: from square
 1
 -
 RCL IND ST X
 X≠0?
 RTN
-RCL 56
+RCL 56                    'movegen: from square
 2
 -
 RCL IND ST X
 X≠0?
 RTN
-RCL 56
+RCL 56                    'movegen: from square
 3
 -
 RCL IND ST X
 X≠0?
 RTN
-RCL 05
+RCL 05                    'side to move (+1 White, -1 Black)
 +/-
-STO 64
-RCL 56
-STO 63
-XEQ 77
-FS? 03
+STO 64                    'attack test: attacking side
+RCL 56                    'movegen: from square
+STO 63                    'attack test: square
+XEQ 77                    '-> flag 03 if square R63 attacked by side R64
+FS? 03                    'flag: square attacked / in check
 RTN
-RCL 56
+RCL 56                    'movegen: from square
 1
 -
-STO 63
-XEQ 77
-FS? 03
+STO 63                    'attack test: square
+XEQ 77                    '-> flag 03 if square R63 attacked by side R64
+FS? 03                    'flag: square attacked / in check
 RTN
-RCL 56
+RCL 56                    'movegen: from square
 2
 -
-STO 59
-XEQ 65
+STO 59                    'movegen: target square
+XEQ 65                    '-> add quiet move
 RTN
-LBL 77
-CF 03
+LBL 77                    'flag 03 if square R63 attacked by side R64
+CF 03                     'flag: square attacked / in check
 1
-STO 69
-RCL 64
+STO 69                    'attack test: piece type sought
+RCL 64                    'attack test: attacking side
 10
 ×
-RCL 63
+RCL 63                    'attack test: square
 X<>Y
 -
-STO 66
+STO 66                    'attack test: walking square
 1
 -
-XEQ 78
-RCL 66
+XEQ 78                    '-> attacker of wanted type on square X?
+RCL 66                    'attack test: walking square
 1
 +
-XEQ 78
-FS? 03
+XEQ 78                    '-> attacker of wanted type on square X?
+FS? 03                    'flag: square attacked / in check
 RTN
 2
-STO 69
+STO 69                    'attack test: piece type sought
 86
-STO 65
+STO 65                    'attack test: direction pointer
 94
-STO 67
-XEQ 79
-FS? 03
+STO 67                    'attack test: direction end
+XEQ 79                    '-> knight/king attackers
+FS? 03                    'flag: square attacked / in check
 RTN
 6
-STO 69
+STO 69                    'attack test: piece type sought
 40
-STO 65
+STO 65                    'attack test: direction pointer
 48
-STO 67
-XEQ 79
-FS? 03
+STO 67                    'attack test: direction end
+XEQ 79                    '-> knight/king attackers
+FS? 03                    'flag: square attacked / in check
 RTN
 4
-STO 69
+STO 69                    'attack test: piece type sought
 40
-STO 65
+STO 65                    'attack test: direction pointer
 44
-STO 67
-XEQ 80
-FS? 03
+STO 67                    'attack test: direction end
+XEQ 80                    '-> slider attackers: next direction
+FS? 03                    'flag: square attacked / in check
 RTN
 3
-STO 69
+STO 69                    'attack test: piece type sought
 44
-STO 65
+STO 65                    'attack test: direction pointer
 48
-STO 67
-GTO 80
-LBL 78
+STO 67                    'attack test: direction end
+GTO 80                    '-> slider attackers: next direction
+LBL 78                    'attacker of wanted type on square X?
 RCL IND ST X
-RCL 64
+RCL 64                    'attack test: attacking side
 ×
 IP
-RCL 69
+RCL 69                    'attack test: piece type sought
 X=Y?
-SF 03
+SF 03                     'flag: square attacked / in check
 RTN
-LBL 79
-RCL 67
-RCL 65
+LBL 79                    'knight/king attackers
+RCL 67                    'attack test: direction end
+RCL 65                    'attack test: direction pointer
 X=Y?
 RTN
 RCL IND ST X
-RCL 63
+RCL 63                    'attack test: square
 +
-XEQ 78
-FS? 03
+XEQ 78                    '-> attacker of wanted type on square X?
+FS? 03                    'flag: square attacked / in check
 RTN
 1
-STO+ 65
-GTO 79
-LBL 80
-RCL 67
-RCL 65
+STO+ 65                   'attack test: direction pointer
+GTO 79                    '-> knight/king attackers
+LBL 80                    'slider attackers: next direction
+RCL 67                    'attack test: direction end
+RCL 65                    'attack test: direction pointer
 X=Y?
 RTN
 RCL IND ST X
-STO 34
-RCL 63
-STO 66
-LBL 81
-RCL 34
-STO+ 66
+STO 34                    'ray direction (attack test)
+RCL 63                    'attack test: square
+STO 66                    'attack test: walking square
+LBL 81                    'slider attackers: walk ray
+RCL 34                    'ray direction (attack test)
+STO+ 66                   'attack test: walking square
 RCL IND 66
 X=0?
-GTO 81
-RCL 64
+GTO 81                    '-> slider attackers: walk ray
+RCL 64                    'attack test: attacking side
 ×
 IP
 5
 X=Y?
-SF 03
+SF 03                     'flag: square attacked / in check
 R↓
-RCL 69
+RCL 69                    'attack test: piece type sought
 X=Y?
-SF 03
-FS? 03
+SF 03                     'flag: square attacked / in check
+FS? 03                    'flag: square attacked / in check
 RTN
 1
-STO+ 65
-GTO 80
-LBL 82
-RCL 06
-STO 28
-RCL 07
-STO 26
-RCL 08
-STO 27
+STO+ 65                   'attack test: direction pointer
+GTO 80                    '-> slider attackers: next direction
+LBL 82                    'make move R21
+RCL 06                    'score, White's view
+STO 28                    'undo: old score
+RCL 07                    'en-passant square
+STO 26                    'undo: old en-passant square
+RCL 08                    'castling rights (1 WK, 2 WQ, 4 BK, 8 BQ)
+STO 27                    'undo: old castling rights
 0
-STO 29
-STO 07
-RCL 21
+STO 29                    'move type (1 e.p., 2 castle)
+STO 07                    'en-passant square
+RCL 21                    'current move (from*1000+to)
 1000
 ÷
 IP
-STO 22
-RCL 21
+STO 22                    'move: from square
+RCL 21                    'current move (from*1000+to)
 1000
 MOD
-STO 23
+STO 23                    'move: to square
 RCL IND 22
-STO 24
+STO 24                    'move: moving piece
 RCL IND 23
-STO 25
-RCL 24
-STO 00
-RCL 22
-STO 01
-XEQ c
-STO- 06
-RCL 25
+STO 25                    'move: captured piece
+RCL 24                    'move: moving piece
+STO 00                    'temp / PST piece
+RCL 22                    'move: from square
+STO 01                    'temp / PST square
+XEQ c                     '-> piece-square value of R00 on R01
+STO- 06                   'score, White's view
+RCL 25                    'move: captured piece
 X=0?
-GTO 83
-STO 00
-RCL 23
-STO 01
-XEQ c
-STO- 06
-RCL 25
-XEQ 94
-STO 13
+GTO 83                    '-> capture handled
+STO 00                    'temp / PST piece
+RCL 23                    'move: to square
+STO 01                    'temp / PST square
+XEQ c                     '-> piece-square value of R00 on R01
+STO- 06                   'score, White's view
+RCL 25                    'move: captured piece
+XEQ 94                    '-> piece value -> piece-list register
+STO 13                    'temp / sprite code / capture key
 0
 STO IND 13
-LBL 83
-RCL 24
+LBL 83                    'capture handled
+RCL 24                    'move: moving piece
 ABS
 IP
 1
 X≠Y?
-GTO 87
-RCL 23
-RCL 26
+GTO 87                    '-> not a pawn: king?
+RCL 23                    'move: to square
+RCL 26                    'undo: old en-passant square
 X≠Y?
-GTO 84
-RCL 05
+GTO 84                    '-> not en passant
+RCL 05                    'side to move (+1 White, -1 Black)
 10
 ×
-RCL 23
+RCL 23                    'move: to square
 X<>Y
 -
-STO 39
+STO 39                    'temp square
 RCL IND 39
-STO 25
-STO 00
-RCL 39
-STO 01
-XEQ c
-STO- 06
-RCL 25
-XEQ 94
-STO 13
+STO 25                    'move: captured piece
+STO 00                    'temp / PST piece
+RCL 39                    'temp square
+STO 01                    'temp / PST square
+XEQ c                     '-> piece-square value of R00 on R01
+STO- 06                   'score, White's view
+RCL 25                    'move: captured piece
+XEQ 94                    '-> piece value -> piece-list register
+STO 13                    'temp / sprite code / capture key
 0
 STO IND 13
 STO IND 39
 1
-STO 29
-LBL 84
-RCL 23
-RCL 22
+STO 29                    'move type (1 e.p., 2 castle)
+LBL 84                    'not en passant
+RCL 23                    'move: to square
+RCL 22                    'move: from square
 -
 ABS
 20
 X≠Y?
-GTO 85
-RCL 23
-RCL 22
+GTO 85                    '-> not a double push
+RCL 23                    'move: to square
+RCL 22                    'move: from square
 +
 2
 ÷
-STO 07
-LBL 85
-RCL 23
+STO 07                    'en-passant square
+LBL 85                    'not a double push
+RCL 23                    'move: to square
 190
 X<Y?
-GTO 86
-RCL 23
+GTO 86                    '-> promotion to queen
+RCL 23                    'move: to square
 130
 X>Y?
-GTO 86
-GTO 91
-LBL 86
-RCL 05
+GTO 86                    '-> promotion to queen
+GTO 91                    '-> normal piece
+LBL 86                    'promotion to queen
+RCL 05                    'side to move (+1 White, -1 Black)
 4
 ×
-RCL 24
+RCL 24                    'move: moving piece
 +
-GTO 92
-LBL 87
+GTO 92                    '-> put piece on target square
+LBL 87                    'not a pawn: king?
 R↓
 6
 X≠Y?
-GTO 91
+GTO 91                    '-> normal piece
 19
-RCL 05
+RCL 05                    'side to move (+1 White, -1 Black)
 -
 2
 ÷
-STO 13
-RCL 23
+STO 13                    'temp / sprite code / capture key
+RCL 23                    'move: to square
 STO IND 13
-RCL 23
-RCL 22
+RCL 23                    'move: to square
+RCL 22                    'move: from square
 -
 2
 X=Y?
-GTO 88
+GTO 88                    '-> castle king side: rook
 +/-
 X=Y?
-GTO 89
-GTO 91
-LBL 88
-RCL 22
+GTO 89                    '-> castle queen side: rook
+GTO 91                    '-> normal piece
+LBL 88                    'castle king side: rook
+RCL 22                    'move: from square
 3
 +
-STO 39
-RCL 22
+STO 39                    'temp square
+RCL 22                    'move: from square
 1
 +
-GTO 90
-LBL 89
-RCL 22
+GTO 90                    '-> move the rook
+LBL 89                    'castle queen side: rook
+RCL 22                    'move: from square
 4
 -
-STO 39
-RCL 22
+STO 39                    'temp square
+RCL 22                    'move: from square
 1
 -
-LBL 90
-STO 03
+LBL 90                    'move the rook
+STO 03                    'temp / pointer
 RCL IND 39
 STO IND 03
-XEQ 94
-STO 13
-RCL 03
+XEQ 94                    '-> piece value -> piece-list register
+STO 13                    'temp / sprite code / capture key
+RCL 03                    'temp / pointer
 STO IND 13
 0
 STO IND 39
 2
-STO 29
-LBL 91
-RCL 24
-LBL 92
+STO 29                    'move type (1 e.p., 2 castle)
+LBL 91                    'normal piece
+RCL 24                    'move: moving piece
+LBL 92                    'put piece on target square
 STO IND 23
-STO 00
-RCL 23
-STO 01
-XEQ c
-STO+ 06
+STO 00                    'temp / PST piece
+RCL 23                    'move: to square
+STO 01                    'temp / PST square
+XEQ c                     '-> piece-square value of R00 on R01
+STO+ 06                   'score, White's view
 0
 STO IND 22
-RCL 24
-XEQ 94
-STO 13
-RCL 23
+RCL 24                    'move: moving piece
+XEQ 94                    '-> piece value -> piece-list register
+STO 13                    'temp / sprite code / capture key
+RCL 23                    'move: to square
 STO IND 13
-RCL 08
+RCL 08                    'castling rights (1 WK, 2 WQ, 4 BK, 8 BQ)
 X=0?
-GTO 93
-RCL 22
-XEQ 95
-RCL 23
-XEQ 95
-LBL 93
-RCL 05
+GTO 93                    '-> switch side to move
+RCL 22                    'move: from square
+XEQ 95                    '-> castling rights for square X
+RCL 23                    'move: to square
+XEQ 95                    '-> castling rights for square X
+LBL 93                    'switch side to move
+RCL 05                    'side to move (+1 White, -1 Black)
 +/-
-STO 05
+STO 05                    'side to move (+1 White, -1 Black)
 RTN
-LBL 94
+LBL 94                    'piece value -> piece-list register
 ABS
 FP
 100
@@ -1428,511 +1436,512 @@ FP
 1080
 +
 RTN
-LBL 95
-STO 04
+LBL 95                    'castling rights for square X
+STO 04                    'temp
 130
 X>Y?
-GTO 96
-RCL 04
+GTO 96                    '-> corner or king square?
+RCL 04                    'temp
 190
 X>Y?
 RTN
-LBL 96
-RCL 04
+LBL 96                    'corner or king square?
+RCL 04                    'temp
 121
 X=Y?
-GTO 97
-RCL 04
+GTO 97                    '-> a1: lose WQ
+RCL 04                    'temp
 125
 X=Y?
-GTO 98
-RCL 04
+GTO 98                    '-> e1: lose WK+WQ
+RCL 04                    'temp
 128
 X=Y?
-GTO 99
-RCL 04
+GTO 99                    '-> h1: lose WK
+RCL 04                    'temp
 191
 X=Y?
-GTO A
-RCL 04
+GTO A                     '-> a8: lose BQ
+RCL 04                    'temp
 195
 X=Y?
-GTO B
-RCL 04
+GTO B                     '-> e8: lose BK+BQ
+RCL 04                    'temp
 198
 X=Y?
-GTO C
+GTO C                     '-> h8: lose BK
 RTN
-LBL 97
+LBL 97                    'a1: lose WQ
 2
-GTO D
-LBL 98
+GTO D                     '-> clear castling bit X
+LBL 98                    'e1: lose WK+WQ
 1
-XEQ D
+XEQ D                     '-> clear castling bit X
 2
-GTO D
-LBL 99
+GTO D                     '-> clear castling bit X
+LBL 99                    'h1: lose WK
 1
-GTO D
-LBL A
+GTO D                     '-> clear castling bit X
+LBL A                     'a8: lose BQ
 8
-GTO D
-LBL B
+GTO D                     '-> clear castling bit X
+LBL B                     'e8: lose BK+BQ
 4
-XEQ D
+XEQ D                     '-> clear castling bit X
 8
-GTO D
-LBL C
+GTO D                     '-> clear castling bit X
+LBL C                     'h8: lose BK
 4
-LBL D
-STO 03
-RCL 08
-RCL 03
+LBL D                     'clear castling bit X
+STO 03                    'temp / pointer
+RCL 08                    'castling rights (1 WK, 2 WQ, 4 BK, 8 BQ)
+RCL 03                    'temp / pointer
 ÷
 IP
 2
 MOD
 X=0?
 RTN
-RCL 03
-STO- 08
+RCL 03                    'temp / pointer
+STO- 08                   'castling rights (1 WK, 2 WQ, 4 BK, 8 BQ)
 RTN
-LBL E
-RCL 05
+LBL E                     'undo last move
+RCL 05                    'side to move (+1 White, -1 Black)
 +/-
-STO 05
-RCL 24
+STO 05                    'side to move (+1 White, -1 Black)
+RCL 24                    'move: moving piece
 STO IND 22
-XEQ 94
-STO 13
-RCL 22
+XEQ 94                    '-> piece value -> piece-list register
+STO 13                    'temp / sprite code / capture key
+RCL 22                    'move: from square
 STO IND 13
-RCL 29
+RCL 29                    'move type (1 e.p., 2 castle)
 1
 X=Y?
-GTO I
-RCL 25
+GTO I                     '-> undo en passant
+RCL 25                    'move: captured piece
 STO IND 23
 X=0?
-GTO F
-XEQ 94
-STO 13
-RCL 23
+GTO F                     '-> captured piece restored
+XEQ 94                    '-> piece value -> piece-list register
+STO 13                    'temp / sprite code / capture key
+RCL 23                    'move: to square
 STO IND 13
-LBL F
-RCL 29
+LBL F                     'captured piece restored
+RCL 29                    'move type (1 e.p., 2 castle)
 2
 X=Y?
-GTO J
-LBL G
-RCL 24
+GTO J                     '-> undo castling rook
+LBL G                     'restore king square
+RCL 24                    'move: moving piece
 ABS
 IP
 6
 X≠Y?
-GTO H
+GTO H                     '-> restore score, e.p., rights
 19
-RCL 05
+RCL 05                    'side to move (+1 White, -1 Black)
 -
 2
 ÷
-STO 13
-RCL 22
+STO 13                    'temp / sprite code / capture key
+RCL 22                    'move: from square
 STO IND 13
-LBL H
-RCL 28
-STO 06
-RCL 26
-STO 07
-RCL 27
-STO 08
+LBL H                     'restore score, e.p., rights
+RCL 28                    'undo: old score
+STO 06                    'score, White's view
+RCL 26                    'undo: old en-passant square
+STO 07                    'en-passant square
+RCL 27                    'undo: old castling rights
+STO 08                    'castling rights (1 WK, 2 WQ, 4 BK, 8 BQ)
 RTN
-LBL I
+LBL I                     'undo en passant
 0
 STO IND 23
-RCL 05
+RCL 05                    'side to move (+1 White, -1 Black)
 10
 ×
-RCL 23
+RCL 23                    'move: to square
 X<>Y
 -
-STO 39
-RCL 25
+STO 39                    'temp square
+RCL 25                    'move: captured piece
 STO IND 39
-XEQ 94
-STO 13
-RCL 39
+XEQ 94                    '-> piece value -> piece-list register
+STO 13                    'temp / sprite code / capture key
+RCL 39                    'temp square
 STO IND 13
-GTO H
-LBL J
-RCL 23
-RCL 22
+GTO H                     '-> restore score, e.p., rights
+LBL J                     'undo castling rook
+RCL 23                    'move: to square
+RCL 22                    'move: from square
 X<Y?
-GTO a
-RCL 22
+GTO a                     '-> king side rook back
+RCL 22                    'move: from square
 1
 -
-STO 03
-RCL 22
+STO 03                    'temp / pointer
+RCL 22                    'move: from square
 4
 -
-GTO b
-LBL a
-RCL 22
+GTO b                     '-> put rook back
+LBL a                     'king side rook back
+RCL 22                    'move: from square
 1
 +
-STO 03
-RCL 22
+STO 03                    'temp / pointer
+RCL 22                    'move: from square
 3
 +
-LBL b
-STO 39
+LBL b                     'put rook back
+STO 39                    'temp square
 RCL IND 03
 STO IND 39
-XEQ 94
-STO 13
-RCL 39
+XEQ 94                    '-> piece value -> piece-list register
+STO 13                    'temp / sprite code / capture key
+RCL 39                    'temp square
 STO IND 13
 0
 STO IND 03
-GTO G
-LBL c
-RCL 01
+GTO G                     '-> restore king square
+LBL c                     'piece-square value of R00 on R01
+RCL 01                    'temp / PST square
 880
 +
 RCL IND ST X
-STO 02
-RCL 00
+STO 02                    'temp
+RCL 00                    'temp / PST piece
 ABS
 IP
-STO 03
+STO 03                    'temp / pointer
 1
 X=Y?
-GTO d
-RCL 03
+GTO d                     '-> pawn value
+RCL 03                    'temp / pointer
 75
 +
-STO 04
+STO 04                    'temp
 RCL IND 04
-RCL 02
+RCL 02                    'temp
 ×
-STO 02
-RCL 03
+STO 02                    'temp
+RCL 03                    'temp / pointer
 69
 +
-STO 04
+STO 04                    'temp
 RCL IND 04
-RCL 02
+RCL 02                    'temp
 +
-GTO e
-LBL d
-RCL 01
+GTO e                     '-> apply colour sign
+LBL d                     'pawn value
+RCL 01                    'temp / PST square
 10
 ÷
 IP
 15.5
 -
-RCL 00
+RCL 00                    'temp / PST piece
 SIGN
 ×
 2.5
 +
-STO 04
-RCL 02
+STO 04                    'temp
+RCL 02                    'temp
 ×
-RCL 04
+RCL 04                    'temp
 X↑2
 2
 ×
 +
 100
 +
-LBL e
-RCL 00
+LBL e                     'apply colour sign
+RCL 00                    'temp / PST piece
 SIGN
 ×
 RTN
-LBL 00
+LBL 00                    'recompute score from scratch
 0
-STO 06
+STO 06                    'score, White's view
 1081
-STO 12
-LBL 01
+STO 12                    'pointer
+LBL 01                    'next piece
 RCL IND 12
 X=0?
-GTO 02
-STO 01
+GTO 02                    '-> piece captured: skip
+STO 01                    'temp / PST square
 RCL IND ST X
-STO 00
-XEQ c
-STO+ 06
-LBL 02
+STO 00                    'temp / PST piece
+XEQ c                     '-> piece-square value of R00 on R01
+STO+ 06                   'score, White's view
+LBL 02                    'piece captured: skip
 1
-STO+ 12
-RCL 12
+STO+ 12                   'pointer
+RCL 12                    'pointer
 1113
 X≠Y?
-GTO 01
+GTO 01                    '-> next piece
 RTN
 END
-LBL "CHCON"
-FS?C 07
-XEQ 60
-LBL 15
+
+LBL "CHCON"               'graphical UI: continue game
+FS?C 07                   'flag: first run: build tables
+XEQ 60                    '-> build glyph tables
+LBL 15                    'redraw screen, then wait for key
 3
-STO "GrMod"
-XEQ 39
-LBL 16
-GETKEY
-STO 55
+STO "GrMod"               'graphics mode (3 = 400x240)
+XEQ 39                    '-> draw whole screen
+LBL 16                    'wait for a key
+GETKEY                    'wait for a key
+STO 55                    'key code
 13
 X=Y?
-GTO 22
-RCL 55
+GTO 22                    '-> ENTER pressed
+RCL 55                    'key code
 20
 X=Y?
-GTO 17
-RCL 55
+GTO 17                    '-> 8: cursor up
+RCL 55                    'key code
 30
 X=Y?
-GTO 18
-RCL 55
+GTO 18                    '-> 2: cursor down
+RCL 55                    'key code
 24
 X=Y?
-GTO 19
-RCL 55
+GTO 19                    '-> 4: cursor left
+RCL 55                    'key code
 26
 X=Y?
-GTO 20
-RCL 55
+GTO 20                    '-> 6: cursor right
+RCL 55                    'key code
 17
 X=Y?
-GTO 31
-RCL 55
+GTO 31                    '-> <-: clear selection
+RCL 55                    'key code
 34
 X=Y?
-GTO 33
-RCL 55
+GTO 33                    '-> computer's move
+RCL 55                    'key code
 21
 X=Y?
-GTO 30
-RCL 55
+GTO 30                    '-> 9: next level
+RCL 55                    'key code
 33
 X=Y?
-GTO 32
-GTO 16
-LBL 17
+GTO 32                    '-> EXIT: back to normal display
+GTO 16                    '-> wait for a key
+LBL 17                    '8: cursor up
 10
-GTO 21
-LBL 18
+GTO 21                    '-> move cursor if it stays on board
+LBL 18                    '2: cursor down
 10
 +/-
-GTO 21
-LBL 19
+GTO 21                    '-> move cursor if it stays on board
+LBL 19                    '4: cursor left
 1
 +/-
-GTO 21
-LBL 20
+GTO 21                    '-> move cursor if it stays on board
+LBL 20                    '6: cursor right
 1
-LBL 21
-RCL 83
+LBL 21                    'move cursor if it stays on board
+RCL 83                    'UI cursor square
 +
-STO 39
+STO 39                    'temp square
 RCL IND 39
 0.5
 X=Y?
-GTO 16
-RCL 39
-STO 83
-GTO 15
-LBL 22
-RCL 49
+GTO 16                    '-> wait for a key
+RCL 39                    'temp square
+STO 83                    'UI cursor square
+GTO 15                    '-> redraw screen, then wait for key
+LBL 22                    'ENTER pressed
+RCL 49                    'UI stage (0 pick piece, 1 pick target)
 X≠0?
-GTO 24
+GTO 24                    '-> target chosen: try the move
 RCL IND 83
-RCL 05
+RCL 05                    'side to move (+1 White, -1 Black)
 ×
 1
 X>Y?
-GTO 23
-RCL 83
-STO 50
+GTO 23                    '-> not your piece
+RCL 83                    'UI cursor square
+STO 50                    'UI selected piece square
 1
-STO 49
-STO 53
-GTO 15
-LBL 23
+STO 49                    'UI stage (0 pick piece, 1 pick target)
+STO 53                    'UI status message number
+GTO 15                    '-> redraw screen, then wait for key
+LBL 23                    'not your piece
 8
-STO 53
-GTO 15
-LBL 24
-RCL 83
-RCL 50
+STO 53                    'UI status message number
+GTO 15                    '-> redraw screen, then wait for key
+LBL 24                    'target chosen: try the move
+RCL 83                    'UI cursor square
+RCL 50                    'UI selected piece square
 X=Y?
-GTO 31
+GTO 31                    '-> <-: clear selection
 0
-STO 49
-RCL 50
+STO 49                    'UI stage (0 pick piece, 1 pick target)
+RCL 50                    'UI selected piece square
 1000
 ×
-RCL 83
+RCL 83                    'UI cursor square
 +
-STO 21
-SF 06
+STO 21                    'current move (from*1000+to)
+SF 06                     'flag: engine service call
 1
-STO 38
-XEQ "CHESS"
-RCL 30
-STO 18
-LBL 25
-RCL 18
-RCL 19
+STO 38                    'engine service code
+XEQ "CHESS"               'engine: generate moves at ply 0
+RCL 30                    'move-list base for this ply
+STO 18                    'move-list index
+LBL 25                    'search move list
+RCL 18                    'move-list index
+RCL 19                    'end of captures in list
 X≠Y?
-GTO 26
-RCL 20
-STO 18
-LBL 26
-RCL 30
+GTO 26                    '-> end of list?
+RCL 20                    'start of quiet moves in list
+STO 18                    'move-list index
+LBL 26                    'end of list?
+RCL 30                    'move-list base for this ply
 80
 +
-RCL 18
+RCL 18                    'move-list index
 X=Y?
-GTO 28
+GTO 28                    '-> illegal move
 RCL IND ST X
 1000000
 MOD
-RCL 21
+RCL 21                    'current move (from*1000+to)
 X=Y?
-GTO 27
+GTO 27                    '-> move found: make it
 1
-STO+ 18
-GTO 25
-LBL 27
-SF 06
+STO+ 18                   'move-list index
+GTO 25                    '-> search move list
+LBL 27                    'move found: make it
+SF 06                     'flag: engine service call
 2
-STO 38
-XEQ "CHESS"
-SF 06
+STO 38                    'engine service code
+XEQ "CHESS"               'engine: make move R21
+SF 06                     'flag: engine service call
 3
-STO 38
-XEQ "CHESS"
-FC? 03
-GTO 29
-SF 06
+STO 38                    'engine service code
+XEQ "CHESS"               'engine: flag 03 if mover's king is attacked
+FC? 03                    'flag: square attacked / in check
+GTO 29                    '-> legal: computer replies
+SF 06                     'flag: engine service call
 4
-STO 38
-XEQ "CHESS"
-LBL 28
+STO 38                    'engine service code
+XEQ "CHESS"               'engine: undo last move
+LBL 28                    'illegal move
 3
-STO 53
-GTO 15
-LBL 29
-RCL 21
-STO 54
-GTO 33
-LBL 30
-RCL 33
+STO 53                    'UI status message number
+GTO 15                    '-> redraw screen, then wait for key
+LBL 29                    'legal: computer replies
+RCL 21                    'current move (from*1000+to)
+STO 54                    'last move (for marks/panel)
+GTO 33                    '-> computer's move
+LBL 30                    '9: next level
+RCL 33                    'level (search depth)
 3
 MOD
 1
 +
-STO 33
-GTO 15
-LBL 31
+STO 33                    'level (search depth)
+GTO 15                    '-> redraw screen, then wait for key
+LBL 31                    '<-: clear selection
 0
-STO 49
-GTO 15
-LBL 32
+STO 49                    'UI stage (0 pick piece, 1 pick target)
+GTO 15                    '-> redraw screen, then wait for key
+LBL 32                    'EXIT: back to normal display
 CLLCD
 0
-STO "GrMod"
+STO "GrMod"               'graphics mode (3 = 400x240)
 "XEQ CHCON to"
 ├"[LF]continue"
 AVIEW
 RTN
-LBL 33
+LBL 33                    'computer's move
 0
-STO 49
+STO 49                    'UI stage (0 pick piece, 1 pick target)
 2
-STO 53
+STO 53                    'UI status message number
 3
-STO "GrMod"
-XEQ 39
-SF 06
+STO "GrMod"               'graphics mode (3 = 400x240)
+XEQ 39                    '-> draw whole screen
+SF 06                     'flag: engine service call
 5
-STO 38
-XEQ "CHESS"
-RCL 35
-STO 32
-RCL 31
+STO 38                    'engine service code
+XEQ "CHESS"               'engine: alpha-beta search from the root
+RCL 35                    'value returned to parent
+STO 32                    'root score
+RCL 31                    'best root move
 X=0?
-GTO 37
-STO 21
-STO 54
-SF 06
+GTO 37                    '-> computer has no move
+STO 21                    'current move (from*1000+to)
+STO 54                    'last move (for marks/panel)
+SF 06                     'flag: engine service call
 2
-STO 38
-XEQ "CHESS"
-SF 06
+STO 38                    'engine service code
+XEQ "CHESS"               'engine: make move R21
+SF 06                     'flag: engine service call
 6
-STO 38
-XEQ "CHESS"
-SF 06
+STO 38                    'engine service code
+XEQ "CHESS"               'engine: flag 05 if side to move has a legal move
+SF 06                     'flag: engine service call
 7
-STO 38
-XEQ "CHESS"
+STO 38                    'engine service code
+XEQ "CHESS"               'engine: flag 03 if side to move in check
 1
-STO 53
-FS? 03
-XEQ 34
-FC? 05
-XEQ 35
-GTO 15
-LBL 34
+STO 53                    'UI status message number
+FS? 03                    'flag: square attacked / in check
+XEQ 34                    '-> status: check
+FC? 05                    'flag: side to move has a legal move
+XEQ 35                    '-> status: game over
+GTO 15                    '-> redraw screen, then wait for key
+LBL 34                    'status: check
 4
-STO 53
+STO 53                    'UI status message number
 RTN
-LBL 35
+LBL 35                    'status: game over
 7
-STO 53
-FS? 03
-XEQ 36
+STO 53                    'UI status message number
+FS? 03                    'flag: square attacked / in check
+XEQ 36                    '-> status: I win
 RTN
-LBL 36
+LBL 36                    'status: I win
 5
-STO 53
+STO 53                    'UI status message number
 RTN
-LBL 37
-SF 06
+LBL 37                    'computer has no move
+SF 06                     'flag: engine service call
 7
-STO 38
-XEQ "CHESS"
+STO 38                    'engine service code
+XEQ "CHESS"               'engine: flag 03 if side to move in check
 7
-STO 53
-FS? 03
-XEQ 38
-GTO 15
-LBL 38
+STO 53                    'UI status message number
+FS? 03                    'flag: square attacked / in check
+XEQ 38                    '-> status: you win
+GTO 15                    '-> redraw screen, then wait for key
+LBL 38                    'status: you win
 6
-STO 53
+STO 53                    'UI status message number
 RTN
-LBL 39
+LBL 39                    'draw whole screen
 CLLCD
 1
-STO 84
-LBL 40
+STO 84                    'draw loop: rank
+LBL 40                    'board: rank loop
 1
-STO 85
-LBL 41
-RCL 84
+STO 85                    'draw loop: file
+LBL 41                    'board: file loop
+RCL 84                    'draw loop: rank
 10
 ×
-RCL 85
+RCL 85                    'draw loop: file
 +
 110
 +
-STO 39
-XEQ 49
+STO 39                    'temp square
+XEQ 49                    '-> square R39 -> row R51, col R52
 RCL IND 39
 ABS
 IP
@@ -1943,8 +1952,8 @@ SIGN
 +
 2
 ×
-RCL 84
-RCL 85
+RCL 84                    'draw loop: rank
+RCL 85                    'draw loop: file
 +
 2
 MOD
@@ -1952,610 +1961,610 @@ MOD
 X<>Y
 -
 +
-STO 13
+STO 13                    'temp / sprite code / capture key
 12
 X≠Y?
-XEQ 61
+XEQ 61                    '-> draw sprite R13
 1
-STO+ 85
-RCL 85
+STO+ 85                   'draw loop: file
+RCL 85                    'draw loop: file
 9
 X≠Y?
-GTO 41
+GTO 41                    '-> board: file loop
 1
-STO+ 84
-RCL 84
+STO+ 84                   'draw loop: rank
+RCL 84                    'draw loop: rank
 9
 X≠Y?
-GTO 40
-RCL 54
+GTO 40                    '-> board: rank loop
+RCL 54                    'last move (for marks/panel)
 X=0?
-GTO 42
+GTO 42                    '-> cursor frame
 1000
 ÷
 IP
-STO 39
-XEQ 49
+STO 39                    'temp square
+XEQ 49                    '-> square R39 -> row R51, col R52
 27
-STO 13
-XEQ 61
-RCL 54
+STO 13                    'temp / sprite code / capture key
+XEQ 61                    '-> draw sprite R13
+RCL 54                    'last move (for marks/panel)
 1000
 MOD
-STO 39
-XEQ 49
+STO 39                    'temp square
+XEQ 49                    '-> square R39 -> row R51, col R52
 27
-STO 13
-XEQ 61
-LBL 42
-RCL 83
-STO 39
-XEQ 49
+STO 13                    'temp / sprite code / capture key
+XEQ 61                    '-> draw sprite R13
+LBL 42                    'cursor frame
+RCL 83                    'UI cursor square
+STO 39                    'temp square
+XEQ 49                    '-> square R39 -> row R51, col R52
 26
-STO 13
-XEQ 61
-RCL 49
+STO 13                    'temp / sprite code / capture key
+XEQ 61                    '-> draw sprite R13
+RCL 49                    'UI stage (0 pick piece, 1 pick target)
 X=0?
-GTO 43
-RCL 50
-STO 39
-XEQ 49
+GTO 43                    '-> board border
+RCL 50                    'UI selected piece square
+STO 39                    'temp square
+XEQ 49                    '-> square R39 -> row R51, col R52
 28
-STO 13
-XEQ 61
-LBL 43
+STO 13                    'temp / sprite code / capture key
+XEQ 61                    '-> draw sprite R13
+LBL 43                    'board border
 "[x01][x01][x01][x01][x01][x01][x01][x01][x01][x01][x01][x01][x01][x01][x01]"
 ├"[x01][x01][x01][x01][x01][x01][x01][x01][x01][x01][x01][x01][x01][x01]"
 ├"[x01][x01][x01][x01][x01][x01][x01][x01][x01][x01][x01][x01][x01]"
 15
-STO 52
-LBL 44
+STO 52                    'draw column (x)
+LBL 44                    'horizontal border lines
 15
-RCL 52
-AGRAPH
+RCL 52                    'draw column (x)
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 224
-RCL 52
-AGRAPH
+RCL 52                    'draw column (x)
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 42
-STO+ 52
-RCL 52
+STO+ 52                   'draw column (x)
+RCL 52                    'draw column (x)
 225
 X>Y?
-GTO 44
+GTO 44                    '-> horizontal border lines
 CLA
 ├"[xFF]"
 16
-STO 51
-LBL 45
-RCL 51
+STO 51                    'draw row (y)
+LBL 45                    'vertical border lines
+RCL 51                    'draw row (y)
 15
-AGRAPH
-RCL 51
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
+RCL 51                    'draw row (y)
 224
-AGRAPH
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 8
-STO+ 51
-RCL 51
+STO+ 51                   'draw row (y)
+RCL 51                    'draw row (y)
 224
 X>Y?
-GTO 45
+GTO 45                    '-> vertical border lines
 1
-STO 84
-LBL 46
+STO 84                    'draw loop: rank
+LBL 46                    'coordinates a-h, 1-8
 CLA
-RCL 84
+RCL 84                    'draw loop: rank
 1150
 +
-STO 39
+STO 39                    'temp square
 ARCL IND 39
 224
-RCL 84
+RCL 84                    'draw loop: rank
 26
 ×
 -
 9
 +
 3
-AGRAPH
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 CLA
-RCL 84
+RCL 84                    'draw loop: rank
 1140
 +
-STO 39
+STO 39                    'temp square
 ARCL IND 39
 228
-RCL 84
+RCL 84                    'draw loop: rank
 26
 ×
 1
 -
-AGRAPH
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 1
-STO+ 84
-RCL 84
+STO+ 84                   'draw loop: rank
+RCL 84                    'draw loop: rank
 9
 X≠Y?
-GTO 46
+GTO 46                    '-> coordinates a-h, 1-8
 "[x00][x00][xFF][xFF][x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][xC0]"
 ├"[xC0]000000[xC0][xC0][x00][x00][xF0][xF0][x00]"
 ├"[x00][x00][x00][x00][x00][xF0][xF0][x00][x00][xC0][xC0]00"
 14
 231
-AGRAPH
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 "0000[xC0][xC0][x00][x00][x00][x00][x03][x03][xFF][xFF][x00]"
 ├"[x00][x00][x00]"
 14
 273
-AGRAPH
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 "[x00][x00]??00000000[x00][x00][x0F]"
 ├"[x0F]333333[x03][x03][x00][x00][x03][x03][x0C]"
 ├"[x0C]00[x0C][x0C][x03][x03][x00][x00][x0F][x0F]33"
 22
 231
-AGRAPH
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 "3333[x03][x03][x00][x00][x00][x00]00??0"
 ├"0[x00][x00]"
 22
 273
-AGRAPH
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 14
-STO 51
+STO 51                    'draw row (y)
 303
-STO 52
-RCL 33
+STO 52                    'draw column (x)
+RCL 33                    'level (search depth)
 4
 ×
 1188
 +
-XEQ 51
-RCL 53
+XEQ 51                    '-> big text: one character
+RCL 53                    'UI status message number
 1
 X=Y?
-XEQ 52
-RCL 53
+XEQ 52                    '-> status text "Your move"
+RCL 53                    'UI status message number
 2
 X=Y?
-XEQ 53
-RCL 53
+XEQ 53                    '-> status text "Thinking..."
+RCL 53                    'UI status message number
 3
 X=Y?
-XEQ 54
-RCL 53
+XEQ 54                    '-> status text "Illegal move"
+RCL 53                    'UI status message number
 4
 X=Y?
-XEQ 55
-RCL 53
+XEQ 55                    '-> status text "Check!"
+RCL 53                    'UI status message number
 5
 X=Y?
-XEQ 56
-RCL 53
+XEQ 56                    '-> status text "Mate - I win"
+RCL 53                    'UI status message number
 6
 X=Y?
-XEQ 57
-RCL 53
+XEQ 57                    '-> status text "Mate - you win"
+RCL 53                    'UI status message number
 7
 X=Y?
-XEQ 58
-RCL 53
+XEQ 58                    '-> status text "Stalemate"
+RCL 53                    'UI status message number
 8
 X=Y?
-XEQ 59
+XEQ 59                    '-> status text "Pick own piece"
 "[x00][x00][xFF][xFF][x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][x00]"
 ├"[x00]000000[xC0][xC0][x00][x00][xC0][xC0]0"
 ├"00000[x00][x00][x00][x00]00[xFF][xFF]"
 50
 231
-AGRAPH
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 "00[x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][x0C][x0C][x00]"
 ├"[x00][x00][x00]"
 50
 273
-AGRAPH
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 "[x00][x00]??00000000[x00][x00][x0C]"
 ├"[x0C]333333??[x00][x00]003"
 ├"33333[x0C][x0C][x00][x00][x00][x00][x0F][x0F]"
 58
 231
-AGRAPH
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 "0000[x0C][x0C][x00][x00][x00][x00][x00][x00][x0C][x0C][x00]"
 ├"[x00][x00][x00]"
 58
 273
-AGRAPH
-RCL 54
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
+RCL 54                    'last move (for marks/panel)
 X=0?
-GTO 47
+GTO 47                    '-> panel: move line
 50
-STO 51
+STO 51                    'draw row (y)
 303
-STO 52
-RCL 54
+STO 52                    'draw column (x)
+RCL 54                    'last move (for marks/panel)
 1000
 ÷
 IP
-XEQ 50
-RCL 54
+XEQ 50                    '-> big text: square name X
+RCL 54                    'last move (for marks/panel)
 1000
 MOD
-XEQ 50
-LBL 47
+XEQ 50                    '-> big text: square name X
+LBL 47                    'panel: move line
 "[x00][x00][xFF][xFF][x0C][x0C][xF0][xF0][x0C][x0C][xFF][xFF][x00][x00][xC0]"
 ├"[xC0]000000[xC0][xC0][x00][x00][xF0][xF0][x00]"
 ├"[x00][x00][x00][x00][x00][xF0][xF0][x00][x00][xC0][xC0]00"
 68
 231
-AGRAPH
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 "0000[xC0][xC0][x00][x00][x00][x00][x00][x00][x0C][x0C][x00]"
 ├"[x00][x00][x00]"
 68
 273
-AGRAPH
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 "[x00][x00]??[x00][x00][x00][x00][x00][x00]??[x00][x00][x0F]"
 ├"[x0F]000000[x0F][x0F][x00][x00][x03][x03][x0C]"
 ├"[x0C]00[x0C][x0C][x03][x03][x00][x00][x0F][x0F]33"
 76
 231
-AGRAPH
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 "3333[x03][x03][x00][x00][x00][x00][x00][x00][x0C][x0C][x00]"
 ├"[x00][x00][x00]"
 76
 273
-AGRAPH
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 68
-STO 51
+STO 51                    'draw row (y)
 303
-STO 52
-RCL 49
+STO 52                    'draw column (x)
+RCL 49                    'UI stage (0 pick piece, 1 pick target)
 X=0?
-GTO 48
-RCL 50
-XEQ 50
+GTO 48                    '-> panel: cursor square
+RCL 50                    'UI selected piece square
+XEQ 50                    '-> big text: square name X
 "[x00][x00][xC0][xC0][xC0][xC0][xC0][xC0][xC0][xC0][xC0][xC0]"
-RCL 51
-RCL 52
-AGRAPH
+RCL 51                    'draw row (y)
+RCL 52                    'draw column (x)
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 "[x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][x00]"
-RCL 51
+RCL 51                    'draw row (y)
 8
 +
-RCL 52
-AGRAPH
+RCL 52                    'draw column (x)
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 12
-STO+ 52
-LBL 48
-RCL 83
-XEQ 50
+STO+ 52                   'draw column (x)
+LBL 48                    'panel: cursor square
+RCL 83                    'UI cursor square
+XEQ 50                    '-> big text: square name X
 "[x00][x00]<<[xC3][xC3][xC3][xC3][xC3][xC3]<<[x00][x00][x00]"
 ├"[x00][x00][x00][xC0][xC0]00[x0F][x0F][x00][x00][x0C][x0C][x03]"
 ├"[x03][x03][x03][xC3][xC3]<<[x00][x00][x00][x00][x00][x00]"
 86
 231
-AGRAPH
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 "[x00][x00][x00][x00][x00][x00][x00][x00][xF0][xF0][x00][x00][x00][x00][x00]"
 ├"[x00][xF0][xF0][x00][x00][xF0][xF0]000000[xC0]"
 ├"[xC0][x00][x00][x00][x00][x00][x00][xC0][xC0]00[x0F][x0F]"
 86
 273
-AGRAPH
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 "[x00][x00][xC0][xC0]0000[xC0][xC0][xFF][xFF][x00][x00][xC0]"
 ├"[xC0]000000[xC0][xC0][x00][x00][xF0][xF0][x00]"
 ├"[x00][x00][x00][x00][x00][xF0][xF0][x00][x00][xF0][xF0][xC0][xC0]"
 86
 315
-AGRAPH
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 "0000[xC0][xC0]"
 86
 357
-AGRAPH
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 "[x00][x00][x0F][x0F]000000[x0F][x0F][x00][x00]<"
 ├"<[x03][x03][x00][x00][x00][x00][x00][x00][x00][x00]00<"
 ├"<330000[x00][x00][x00][x00][x00][x00]"
 94
 231
-AGRAPH
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 "[x00][x00][x00][x00][x00][x00][x00][x00][x0F][x0F]0000[x0C]"
 ├"[x0C]??[x00][x00]??[x03][x03][x03][x03][x03][x03][x00]"
 ├"[x00][x00][x00]<<[x03][x03][x00][x00][x00][x00][x00][x00]"
 94
 273
-AGRAPH
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 "[x00][x00][x0F][x0F]000000??[x00][x00][x0F]"
 ├"[x0F]000000[x0F][x0F][x00][x00][x0F][x0F]0"
 ├"0[x0F][x0F]00[x0F][x0F][x00][x00]??[x00][x00]"
 94
 315
-AGRAPH
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 "[x00][x00][x00][x00]??"
 94
 357
-AGRAPH
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 "[x00][x00][xC0][xC0]00[x0C][x0C][xFF][xFF][x00][x00][x00][x00][x00]"
 ├"[x00][x00][x00][xC0][xC0]00[x0F][x0F][x00][x00][xF0][xF0][xCC]"
 ├"[xCC][xC3][xC3][xC3][xC3][x00][x00][x00][x00][x00][x00][x00][x00]"
 104
 231
-AGRAPH
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 "[x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][x03][x03][xFF][xFF][x00]"
 ├"[x00][x00][x00][x00][x00][xC0][xC0]000000[xC0]"
 ├"[xC0][x00][x00][xC0][xC0][xFC][xFC][xC3][xC3][x03][x03][x0C][x0C]"
 104
 273
-AGRAPH
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 "[x00][x00]00[xFF][xFF]00[x00][x00][x00][x00][x00][x00][x00]"
 ├"[x00][x00][x00][xC0][xC0]00[x0F][x0F][x00][x00][xF0][xF0][xC0]"
 ├"[xC0]0000[xC0][xC0][x00][x00][x00][x00]00"
 104
 315
-AGRAPH
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 CLA
 ├"[xF3][xF3][x00][x00][x00][x00][x00][x00][xF0][xF0][x0C][x0C][x0C][x0C]"
 ├"[x0C][x0C][xFC][xFC][x00][x00][xFF][xFF][xC0][xC0]0000"
 ├"[xC0][xC0][x00][x00]00[xFF][xFF]00[x00][x00][x00][x00]"
 104
 357
-AGRAPH
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 "[x00][x00][x03][x03][x03][x03][x03][x03]??[x03][x03][x00][x00]<"
 ├"<[x03][x03][x00][x00][x00][x00][x00][x00][x00][x00][x0F][x0F]0"
 ├"00000[x0F][x0F][x00][x00][x00][x00][x00][x00]"
 112
 231
-AGRAPH
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 "[x00][x00][x00][x00][x00][x00][x00][x00][x00][x00]00??0"
 ├"0[x00][x00][x00][x00][x0F][x0F]333333[x03]"
 ├"[x03][x00][x00][x00][x00]??[x00][x00][x00][x00][x00][x00]"
 112
 273
-AGRAPH
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 "[x00][x00][x00][x00][x0F][x0F]0000[x0C][x0C][x00][x00]<"
 ├"<[x03][x03][x00][x00][x00][x00][x00][x00][x00][x00]??[x00]"
 ├"[x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][x00]00"
 112
 315
-AGRAPH
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 "??00[x00][x00][x00][x00][x00][x00]33333"
 ├"3[x0F][x0F][x00][x00]??[x00][x00][x00][x00][x00][x00]?"
 ├"?[x00][x00][x00][x00][x0F][x0F]0000[x0C][x0C]"
 112
 357
-AGRAPH
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 "[x00][x00][xFF][xFF][xC3][xC3][xC3][xC3][xC3][xC3][x03][x03][x00][x00][xFF]"
 ├"[xFF][x0C][x0C]00[xC0][xC0][xFF][xFF][x00][x00][x03][x03][x03]"
 ├"[x03][xFF][xFF][x03][x03][x03][x03][x00][x00][xFF][xFF][xC3][xC3]"
 122
 231
-AGRAPH
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 CLA
 ├"[xC3][xC3][xC3][xC3][x03][x03][x00][x00][xFF][xFF][xC3][xC3][xC3][xC3]"
 ├"[xC3][xC3]<<[x00][x00][x00][x00][x00][x00][x00][x00][x00][x00]"
 ├"[x00][x00][x00][x00][xC0][xC0]000000[x00][x00]"
 122
 273
-AGRAPH
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 "[x00][x00][xC0][xC0]000000[xC0][xC0][x00][x00][x00]"
 ├"[x00][x03][x03][xFF][xFF][x00][x00][x00][x00][x00][x00][xC0][xC0]0"
 ├"00000[xC0][xC0][x00][x00][xC0][xC0]00"
 122
 315
-AGRAPH
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 "0000[x00][x00][x00][x00]00[xFF][xFF]00[x00]"
 ├"[x00][x00][x00]"
 122
 357
-AGRAPH
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 "[x00][x00]??00000000[x00][x00]?"
 ├"?[x00][x00][x00][x00][x00][x00]??[x00][x00][x00][x00][x00]"
 ├"[x00]??[x00][x00][x00][x00][x00][x00]??00"
 130
 231
-AGRAPH
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 "000000[x00][x00]??[x00][x00][x03][x03][x0C]"
 ├"[x0C]00[x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][x00]"
 ├"[x00][x00][x00]00333333[x0C][x0C]"
 130
 273
-AGRAPH
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 "[x00][x00][x0F][x0F]333333[x03][x03][x00][x00][x00]"
 ├"[x00]00??00[x00][x00][x00][x00][x0F][x0F]3"
 ├"33333[x03][x03][x00][x00][x0F][x0F]00"
 130
 315
-AGRAPH
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 "0000[x0C][x0C][x00][x00][x00][x00][x0F][x0F]000"
 ├"0[x0C][x0C]"
 130
 357
-AGRAPH
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 "[x00][x00][xC0][xC0]00[x0C][x0C][x03][x03][x00][x00][x00][x00][xC0]"
 ├"[xC0][xC0][xC0][xC0][xC0][xC0][xC0][xC0][xC0][x00][x00][x00][x00][x00]"
 ├"[x00][x00][x00][x00][x00][x00][x00][x00][x00][xC0][xC0]00"
 140
 231
-AGRAPH
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 "0000[x00][x00][x00][x00][x00][x00][x03][x03][xFF][xFF][x00]"
 ├"[x00][x00][x00][x00][x00][xC0][xC0]000000[xC0]"
 ├"[xC0][x00][x00][x00][x00]000000[xC0][xC0]"
 140
 273
-AGRAPH
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 "[x00][x00][xF0][xF0][xC0][xC0]0000[xC0][xC0]"
 140
 315
-AGRAPH
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 "[x00][x00][x00][x00][x03][x03][x0C][x0C]00[x00][x00][x00][x00][x00]"
 ├"[x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][x00]"
 ├"[x00][x00][x00][x00][x00][x00][x00][x00][x00][x0F][x0F]00"
 148
 231
-AGRAPH
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 "0000[x0C][x0C][x00][x00][x00][x00]00??0"
 ├"0[x00][x00][x00][x00][x0F][x0F]333333[x03]"
 ├"[x03][x00][x00][x0C][x0C]333333??"
 148
 273
-AGRAPH
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 "[x00][x00]??[x00][x00][x00][x00][x00][x00][x00][x00]"
 148
 315
-AGRAPH
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 "[x00][x00][xFC][xFC][x03][x03][xC3][xC3]33[xFC][xFC][x00][x00][x00]"
 ├"[x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][xF0][xF0]0"
 ├"00000[xC0][xC0][x00][x00][x00][x00][x03][x03]"
 158
 231
-AGRAPH
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 CLA
 ├"[xFF][xFF][x00][x00][x00][x00][x00][x00][x00][x00]0000"
 ├"00[xC0][xC0][x00][x00][xF0][xF0][x00][x00][x00][x00][x00][x00]"
 ├"[xF0][xF0][x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][x00]"
 158
 273
-AGRAPH
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 "[x00][x00][xC0][xC0][xFC][xFC][xC3][xC3][x03][x03][x0C][x0C][x00][x00][xC0]"
 ├"[xC0]000000[xC0][xC0][x00][x00][xF0][xF0][xC0]"
 ├"[xC0]0000[xC0][xC0][x00][x00][x00][x00][x00][x00]"
 158
 315
-AGRAPH
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 "[x00][x00][x00][x00][x00][x00][x00][x00][xF0][xF0]00[xC0][xC0]0"
 ├"0[xC0][xC0][x00][x00][xC0][xC0]000000[xC0]"
 ├"[xC0]"
 158
 357
-AGRAPH
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 "[x00][x00][x0F][x0F]330000[x0F][x0F][x00][x00][x00]"
 ├"[x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][x00]??[x03]"
 ├"[x03][x03][x03][x03][x03][x00][x00][x00][x00][x00][x00]00"
 166
 231
-AGRAPH
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 "??00[x00][x00][x00][x00][x0C][x0C]33333"
 ├"3??[x00][x00][x00][x00]333333[x0F]"
 ├"[x0F][x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][x00]"
 166
 273
-AGRAPH
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 "[x00][x00][x00][x00]??[x00][x00][x00][x00][x00][x00][x00][x00][x0F]"
 ├"[x0F]000000[x0F][x0F][x00][x00]??[x00]"
 ├"[x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][x00]"
 166
 315
-AGRAPH
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 "[x00][x00][x00][x00][x00][x00][x00][x00]??[x00][x00][x03][x03][x00]"
 ├"[x00]??[x00][x00][x0F][x0F]333333[x03]"
 ├"[x03]"
 166
 357
-AGRAPH
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 "[x00][x00]<<[xC3][xC3][xC3][xC3][xC3][xC3][xFC][xFC][x00][x00][x00]"
 ├"[x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][x03]"
 ├"[x03][xFF][xFF][x00][x00][x00][x00][x00][x00][xC0][xC0]00"
 176
 231
-AGRAPH
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 "0000[xC0][xC0][x00][x00][xF0][xF0][x00][x00][x00][x00][x00]"
 ├"[x00][xF0][xF0][x00][x00][xC0][xC0]000000[xC0]"
 ├"[xC0][x00][x00][x00][x00][x03][x03][xFF][xFF][x00][x00][x00][x00]"
 176
 273
-AGRAPH
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 "[x00][x00][x00][x00]0000[x0C][x0C][x03][x03][x00][x00][x00]"
 ├"[x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][x00]0"
 ├"0??00[x00][x00][x00][x00][x0F][x0F]33"
 184
 231
-AGRAPH
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 "3333[x03][x03][x00][x00][x03][x03][x0C][x0C]00[x0C]"
 ├"[x0C][x03][x03][x00][x00][x0F][x0F]333333[x03]"
 ├"[x03][x00][x00][x00][x00]00??00[x00][x00]"
 184
 273
-AGRAPH
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 "[x00][x00][xFF][xFF][xC3][xC3][xC3][xC3][xC3][xC3][x03][x03][x00][x00][x0F]"
 ├"[x0F]00[xC0][xC0]00[x0F][x0F][x00][x00][x00][x00][x03]"
 ├"[x03][xFF][xFF][x03][x03][x00][x00][x00][x00][x03][x03][x03][x03]"
 194
 231
-AGRAPH
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 CLA
 ├"[xFF][xFF][x03][x03][x03][x03][x00][x00][x00][x00][x00][x00][x00][x00]"
 ├"[x00][x00][x00][x00][x00][x00][xC0][xC0]000000"
 ├"[xF0][xF0][x00][x00][xF0][xF0][x00][x00][x00][x00][x00][x00][xF0][xF0]"
 194
 273
-AGRAPH
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 "[x00][x00][x00][x00]00[xF3][xF3][x00][x00][x00][x00][x00][x00]0"
 ├"0[xFF][xFF]00[x00][x00][x00][x00]"
 194
 315
-AGRAPH
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 "[x00][x00]??00000000[x00][x00]<"
 ├"<[x03][x03][x00][x00][x03][x03]<<[x00][x00][x00][x00]0"
 ├"0??00[x00][x00][x00][x00][x00][x00][x00][x00]"
 202
 231
-AGRAPH
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 "??[x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][x00]"
 ├"[x00][x00][x00][x00][x00][x00][x00][x03][x03][x03][x03][x03][x03]?"
 ├"?[x00][x00][x0F][x0F]0000[x0C][x0C]??"
 202
 273
-AGRAPH
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 "[x00][x00][x00][x00]00??00[x00][x00][x00][x00][x00]"
 ├"[x00][x0F][x0F]0000[x0C][x0C]"
 202
 315
-AGRAPH
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 "[x00][x00][x0F][x0F]00[xC0][xC0]00[x0F][x0F][x00][x00][xFF]"
 ├"[xFF][xC3][xC3][xC3][xC3][xC3][xC3][x03][x03][x00][x00][xFC][xFC][x03]"
 ├"[x03][x03][x03][x03][x03][xFC][xFC][x00][x00][x00][x00][x00][x00]"
 212
 231
-AGRAPH
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 "[x00][x00][x00][x00][x00][x00][x00][x00][xFC][xFC][x03][x03][x03][x03][x03]"
 ├"[x03][x0C][x0C][x00][x00][xFF][xFF][xC0][xC0][xC0][xC0][xC0][xC0][xFF]"
 ├"[xFF][x00][x00][xFF][xFF][xC3][xC3][xC3][xC3][xC3][xC3][x03][x03]"
 212
 273
-AGRAPH
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 "[x00][x00]<<[xC3][xC3][xC3][xC3][xC3][xC3][x03][x03][x00][x00]<"
 ├"<[xC3][xC3][xC3][xC3][xC3][xC3][x03][x03][x00][x00][x00][x00][x00]"
 ├"[x00][x00][x00][x00][x00][x00][x00][x00][x00][xF0][xF0][xC0][xC0]"
 212
 315
-AGRAPH
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 "0000[xC0][xC0][x00][x00][xC0][xC0]00000"
 ├"0[xC0][xC0][x00][x00][xF0][xF0][x00][x00][x00][x00][x00][x00][xF0]"
 ├"[xF0]"
 212
 357
-AGRAPH
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 "[x00][x00]<<[x03][x03][x00][x00][x03][x03]<<[x00][x00]?"
 ├"?00000000[x00][x00][x0F][x0F]0"
 ├"033[x0C][x0C]33[x00][x00][x00][x00][x00][x00]"
 220
 231
-AGRAPH
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 "[x00][x00][x00][x00][x00][x00][x00][x00][x0F][x0F]00000"
 ├"0[x0C][x0C][x00][x00]??[x00][x00][x00][x00][x00][x00]?"
 ├"?[x00][x00]??00000000"
 220
 273
-AGRAPH
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 "[x00][x00]00000000[x0F][x0F][x00][x00]0"
 ├"0000000[x0F][x0F][x00][x00][x00][x00][x00]"
 ├"[x00][x00][x00][x00][x00][x00][x00][x00][x00]??[x00][x00]"
 220
 315
-AGRAPH
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 "[x00][x00][x00][x00]??[x00][x00][x0F][x0F]33333"
 ├"3[x03][x03][x00][x00][x0F][x0F]00[x0F][x0F]00[x0F]"
 ├"[x0F]"
 220
 357
-AGRAPH
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 RTN
-LBL 49
-RCL 39
+LBL 49                    'square R39 -> row R51, col R52
+RCL 39                    'temp square
 10
 ÷
 IP
@@ -2566,26 +2575,26 @@ IP
 224
 X<>Y
 -
-STO 51
-RCL 39
+STO 51                    'draw row (y)
+RCL 39                    'temp square
 10
 MOD
 26
 ×
 10
 -
-STO 52
+STO 52                    'draw column (x)
 RTN
-LBL 50
-STO 04
+LBL 50                    'big text: square name X
+STO 04                    'temp
 10
 MOD
 4
 ×
 1156
 +
-XEQ 51
-RCL 04
+XEQ 51                    '-> big text: one character
+RCL 04                    'temp
 10
 ÷
 IP
@@ -2593,1626 +2602,1626 @@ IP
 ×
 1144
 +
-LBL 51
-STO 03
+LBL 51                    'big text: one character
+STO 03                    'temp / pointer
 CLA
 ARCL IND 03
 1
-STO+ 03
+STO+ 03                   'temp / pointer
 ARCL IND 03
-RCL 51
-RCL 52
-AGRAPH
+RCL 51                    'draw row (y)
+RCL 52                    'draw column (x)
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 1
-STO+ 03
+STO+ 03                   'temp / pointer
 CLA
 ARCL IND 03
 1
-STO+ 03
+STO+ 03                   'temp / pointer
 ARCL IND 03
-RCL 51
+RCL 51                    'draw row (y)
 8
 +
-RCL 52
-AGRAPH
+RCL 52                    'draw column (x)
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 12
-STO+ 52
+STO+ 52                   'draw column (x)
 RTN
-LBL 52
+LBL 52                    'status text "Your move"
 "[x00][x00][x0F][x0F]00[xC0][xC0]00[x0F][x0F][x00][x00][xC0]"
 ├"[xC0]000000[xC0][xC0][x00][x00][xF0][xF0][x00]"
 ├"[x00][x00][x00][x00][x00][xF0][xF0][x00][x00][xF0][xF0][xC0][xC0]"
 32
 231
-AGRAPH
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 "0000[xC0][xC0][x00][x00][x00][x00][x00][x00][x00][x00][x00]"
 ├"[x00][x00][x00][x00][x00][xF0][xF0]00[xC0][xC0]00[xC0]"
 ├"[xC0][x00][x00][xC0][xC0]000000[xC0][xC0]"
 32
 273
-AGRAPH
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 "[x00][x00][xF0][xF0][x00][x00][x00][x00][x00][x00][xF0][xF0][x00][x00][xC0]"
 ├"[xC0]000000[xC0][xC0]"
 32
 315
-AGRAPH
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 "[x00][x00][x00][x00][x00][x00]??[x00][x00][x00][x00][x00][x00][x0F]"
 ├"[x0F]000000[x0F][x0F][x00][x00][x0F][x0F]0"
 ├"000[x0C][x0C]??[x00][x00]??[x00][x00]"
 40
 231
-AGRAPH
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 "[x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][x00]"
 ├"[x00][x00][x00][x00][x00]??[x00][x00][x03][x03][x00][x00]?"
 ├"?[x00][x00][x0F][x0F]000000[x0F][x0F]"
 40
 273
-AGRAPH
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 "[x00][x00][x03][x03][x0C][x0C]00[x0C][x0C][x03][x03][x00][x00][x0F]"
 ├"[x0F]333333[x03][x03]"
 40
 315
-AGRAPH
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 RTN
-LBL 53
+LBL 53                    'status text "Thinking..."
 "[x00][x00][x03][x03][x03][x03][xFF][xFF][x03][x03][x03][x03][x00][x00][xFF]"
 ├"[xFF][xC0][xC0]0000[xC0][xC0][x00][x00][x00][x00]0"
 ├"0[xF3][xF3][x00][x00][x00][x00][x00][x00][xF0][xF0][xC0][xC0]"
 32
 231
-AGRAPH
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 "0000[xC0][xC0][x00][x00][xFF][xFF][x00][x00][xC0][xC0]0"
 ├"0[x00][x00][x00][x00][x00][x00]00[xF3][xF3][x00][x00][x00]"
 ├"[x00][x00][x00][xF0][xF0][xC0][xC0]0000[xC0][xC0]"
 32
 273
-AGRAPH
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 "[x00][x00][xF0][xF0][x0C][x0C][x0C][x0C][x0C][x0C][xFC][xFC][x00][x00][x00]"
 ├"[x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][x00]"
 ├"[x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][x00]"
 32
 315
-AGRAPH
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 "[x00][x00][x00][x00][x00][x00]"
 32
 357
-AGRAPH
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 "[x00][x00][x00][x00][x00][x00]??[x00][x00][x00][x00][x00][x00]?"
 ├"?[x00][x00][x00][x00][x00][x00]??[x00][x00][x00][x00]0"
 ├"0??00[x00][x00][x00][x00]??[x00][x00]"
 40
 231
-AGRAPH
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 "[x00][x00][x00][x00]??[x00][x00]??[x03][x03][x0C][x0C]0"
 ├"0[x00][x00][x00][x00][x00][x00]00??00[x00]"
 ├"[x00][x00][x00]??[x00][x00][x00][x00][x00][x00]??"
 40
 273
-AGRAPH
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 "[x00][x00][x00][x00]333333[x0F][x0F][x00][x00][x00]"
 ├"[x00][x00][x00]00[x00][x00][x00][x00][x00][x00][x00][x00][x00]"
 ├"[x00]00[x00][x00][x00][x00][x00][x00][x00][x00][x00][x00]"
 40
 315
-AGRAPH
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 "00[x00][x00][x00][x00]"
 40
 357
-AGRAPH
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 RTN
-LBL 54
+LBL 54                    'status text "Illegal move"
 "[x00][x00][x00][x00][x03][x03][xFF][xFF][x03][x03][x00][x00][x00][x00][x00]"
 ├"[x00][x03][x03][xFF][xFF][x00][x00][x00][x00][x00][x00][x00][x00][x03]"
 ├"[x03][xFF][xFF][x00][x00][x00][x00][x00][x00][xC0][xC0]00"
 32
 231
-AGRAPH
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 "0000[xC0][xC0][x00][x00][xF0][xF0][x0C][x0C][x0C][x0C][x0C]"
 ├"[x0C][xFC][xFC][x00][x00][x00][x00]000000[xC0]"
 ├"[xC0][x00][x00][x00][x00][x03][x03][xFF][xFF][x00][x00][x00][x00]"
 32
 273
-AGRAPH
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 "[x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][xF0]"
 ├"[xF0]00[xC0][xC0]00[xC0][xC0][x00][x00][xC0][xC0]0"
 ├"00000[xC0][xC0][x00][x00][xF0][xF0][x00][x00]"
 32
 315
-AGRAPH
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 "[x00][x00][x00][x00][xF0][xF0][x00][x00][xC0][xC0]00000"
 ├"0[xC0][xC0]"
 32
 357
-AGRAPH
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 "[x00][x00][x00][x00]00??00[x00][x00][x00][x00][x00]"
 ├"[x00]00??00[x00][x00][x00][x00][x00][x00]0"
 ├"0??00[x00][x00][x00][x00][x0F][x0F]33"
 40
 231
-AGRAPH
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 "3333[x03][x03][x00][x00][x00][x00]33333"
 ├"3[x0F][x0F][x00][x00][x0C][x0C]333333?"
 ├"?[x00][x00][x00][x00]00??00[x00][x00]"
 40
 273
-AGRAPH
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 "[x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][x00]?"
 ├"?[x00][x00][x03][x03][x00][x00]??[x00][x00][x0F][x0F]0"
 ├"00000[x0F][x0F][x00][x00][x03][x03][x0C][x0C]"
 40
 315
-AGRAPH
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 "00[x0C][x0C][x03][x03][x00][x00][x0F][x0F]33333"
 ├"3[x03][x03]"
 40
 357
-AGRAPH
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 RTN
-LBL 55
+LBL 55                    'status text "Check!"
 "[x00][x00][xFC][xFC][x03][x03][x03][x03][x03][x03][x0C][x0C][x00][x00][xFF]"
 ├"[xFF][xC0][xC0]0000[xC0][xC0][x00][x00][xC0][xC0]0"
 ├"00000[xC0][xC0][x00][x00][xC0][xC0]00"
 32
 231
-AGRAPH
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 "0000[x00][x00][x00][x00][xFF][xFF][x00][x00][xC0][xC0]0"
 ├"0[x00][x00][x00][x00][x00][x00][x00][x00][xFF][xFF][x00][x00][x00]"
 ├"[x00]"
 32
 273
-AGRAPH
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 "[x00][x00][x0F][x0F]000000[x0C][x0C][x00][x00]?"
 ├"?[x00][x00][x00][x00][x00][x00]??[x00][x00][x0F][x0F]3"
 ├"33333[x03][x03][x00][x00][x0F][x0F]00"
 40
 231
-AGRAPH
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 "0000[x0C][x0C][x00][x00]??[x03][x03][x0C][x0C]0"
 ├"0[x00][x00][x00][x00][x00][x00][x00][x00]33[x00][x00][x00]"
 ├"[x00]"
 40
 273
-AGRAPH
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 RTN
-LBL 56
+LBL 56                    'status text "Mate - I win"
 "[x00][x00][xFF][xFF][x0C][x0C][xF0][xF0][x0C][x0C][xFF][xFF][x00][x00][x00]"
 ├"[x00]000000[xC0][xC0][x00][x00]00[xFF]"
 ├"[xFF]00[x00][x00][x00][x00][x00][x00][xC0][xC0]00"
 32
 231
-AGRAPH
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 "0000[xC0][xC0][x00][x00][x00][x00][x00][x00][x00][x00][x00]"
 ├"[x00][x00][x00][x00][x00][xC0][xC0][xC0][xC0][xC0][xC0][xC0][xC0][xC0]"
 ├"[xC0][x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][x00]"
 32
 273
-AGRAPH
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 "[x00][x00][x00][x00][x03][x03][xFF][xFF][x03][x03][x00][x00][x00][x00][x00]"
 ├"[x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][xF0][xF0][x00]"
 ├"[x00][x00][x00][x00][x00][xF0][xF0][x00][x00][x00][x00]00"
 32
 315
-AGRAPH
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 CLA
 ├"[xF3][xF3][x00][x00][x00][x00][x00][x00][xF0][xF0][xC0][xC0]00"
 ├"00[xC0][xC0]"
 32
 357
-AGRAPH
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 "[x00][x00]??[x00][x00][x00][x00][x00][x00]??[x00][x00][x0C]"
 ├"[x0C]333333??[x00][x00][x00][x00][x0F]"
 ├"[x0F]0000[x0C][x0C][x00][x00][x0F][x0F]33"
 40
 231
-AGRAPH
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 "3333[x03][x03][x00][x00][x00][x00][x00][x00][x00][x00][x00]"
 ├"[x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][x00]"
 ├"[x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][x00]"
 40
 273
-AGRAPH
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 "[x00][x00][x00][x00]00??00[x00][x00][x00][x00][x00]"
 ├"[x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][x0F][x0F]0"
 ├"0[x0F][x0F]00[x0F][x0F][x00][x00][x00][x00]00"
 40
 315
-AGRAPH
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 "??00[x00][x00][x00][x00]??[x00][x00][x00][x00][x00]"
 ├"[x00]??"
 40
 357
-AGRAPH
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 RTN
-LBL 57
+LBL 57                    'status text "Mate - you win"
 "[x00][x00][xFF][xFF][x0C][x0C][xF0][xF0][x0C][x0C][xFF][xFF][x00][x00][x00]"
 ├"[x00]000000[xC0][xC0][x00][x00]00[xFF]"
 ├"[xFF]00[x00][x00][x00][x00][x00][x00][xC0][xC0]00"
 32
 231
-AGRAPH
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 "0000[xC0][xC0][x00][x00][x00][x00][x00][x00][x00][x00][x00]"
 ├"[x00][x00][x00][x00][x00][xC0][xC0][xC0][xC0][xC0][xC0][xC0][xC0][xC0]"
 ├"[xC0][x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][x00]"
 32
 273
-AGRAPH
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 "[x00][x00][xF0][xF0][x00][x00][x00][x00][x00][x00][xF0][xF0][x00][x00][xC0]"
 ├"[xC0]000000[xC0][xC0][x00][x00][xF0][xF0][x00]"
 ├"[x00][x00][x00][x00][x00][xF0][xF0][x00][x00][x00][x00][x00][x00]"
 32
 315
-AGRAPH
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 "[x00][x00][x00][x00][x00][x00][x00][x00][xF0][xF0][x00][x00][x00][x00][x00]"
 ├"[x00][xF0][xF0][x00][x00][x00][x00]00[xF3][xF3][x00][x00][x00]"
 ├"[x00][x00][x00][xF0][xF0][xC0][xC0]0000[xC0][xC0]"
 32
 357
-AGRAPH
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 "[x00][x00]??[x00][x00][x00][x00][x00][x00]??[x00][x00][x0C]"
 ├"[x0C]333333??[x00][x00][x00][x00][x0F]"
 ├"[x0F]0000[x0C][x0C][x00][x00][x0F][x0F]33"
 40
 231
-AGRAPH
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 "3333[x03][x03][x00][x00][x00][x00][x00][x00][x00][x00][x00]"
 ├"[x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][x00]"
 ├"[x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][x00]"
 40
 273
-AGRAPH
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 "[x00][x00][x00][x00]333333[x0F][x0F][x00][x00][x0F]"
 ├"[x0F]000000[x0F][x0F][x00][x00][x0F][x0F]0"
 ├"000[x0C][x0C]??[x00][x00][x00][x00][x00][x00]"
 40
 315
-AGRAPH
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 "[x00][x00][x00][x00][x00][x00][x00][x00][x0F][x0F]00[x0F][x0F]0"
 ├"0[x0F][x0F][x00][x00][x00][x00]00??00[x00]"
 ├"[x00][x00][x00]??[x00][x00][x00][x00][x00][x00]??"
 40
 357
-AGRAPH
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 RTN
-LBL 58
+LBL 58                    'status text "Stalemate"
 "[x00][x00]<<[xC3][xC3][xC3][xC3][xC3][xC3][x03][x03][x00][x00]0"
 ├"0[xFF][xFF]00[x00][x00][x00][x00][x00][x00][x00][x00]0"
 ├"00000[xC0][xC0][x00][x00][x00][x00][x03][x03]"
 32
 231
-AGRAPH
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 CLA
 ├"[xFF][xFF][x00][x00][x00][x00][x00][x00][xC0][xC0]0000"
 ├"00[xC0][xC0][x00][x00][xF0][xF0]00[xC0][xC0]00"
 ├"[xC0][xC0][x00][x00][x00][x00]000000[xC0][xC0]"
 32
 273
-AGRAPH
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 "[x00][x00]00[xFF][xFF]00[x00][x00][x00][x00][x00][x00][xC0]"
 ├"[xC0]000000[xC0][xC0]"
 32
 315
-AGRAPH
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 "[x00][x00]00000000[x0F][x0F][x00][x00][x00]"
 ├"[x00][x0F][x0F]0000[x0C][x0C][x00][x00][x0C][x0C]3"
 ├"33333??[x00][x00][x00][x00]00"
 40
 231
-AGRAPH
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 "??00[x00][x00][x00][x00][x0F][x0F]33333"
 ├"3[x03][x03][x00][x00]??[x00][x00][x03][x03][x00][x00]?"
 ├"?[x00][x00][x0C][x0C]333333??"
 40
 273
-AGRAPH
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 "[x00][x00][x00][x00][x0F][x0F]0000[x0C][x0C][x00][x00][x0F]"
 ├"[x0F]333333[x03][x03]"
 40
 315
-AGRAPH
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 RTN
-LBL 59
+LBL 59                    'status text "Pick own piece"
 "[x00][x00][xFF][xFF][xC3][xC3][xC3][xC3][xC3][xC3]<<[x00][x00][x00]"
 ├"[x00]00[xF3][xF3][x00][x00][x00][x00][x00][x00][xC0][xC0]0"
 ├"00000[x00][x00][x00][x00][xFF][xFF][x00][x00]"
 32
 231
-AGRAPH
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 CLA
 ├"[xC0][xC0]00[x00][x00][x00][x00][x00][x00][x00][x00][x00][x00]"
 ├"[x00][x00][x00][x00][x00][x00][xC0][xC0]000000"
 ├"[xC0][xC0][x00][x00][xF0][xF0][x00][x00][x00][x00][x00][x00][xF0][xF0]"
 32
 273
-AGRAPH
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 "[x00][x00][xF0][xF0][xC0][xC0]0000[xC0][xC0][x00][x00][x00]"
 ├"[x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][xF0][xF0]0"
 ├"00000[xC0][xC0][x00][x00][x00][x00]00"
 32
 315
-AGRAPH
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 CLA
 ├"[xF3][xF3][x00][x00][x00][x00][x00][x00][xC0][xC0]0000"
 ├"00[xC0][xC0][x00][x00][xC0][xC0]000000"
 ├"[x00][x00][x00][x00][xC0][xC0]000000[xC0][xC0]"
 32
 357
-AGRAPH
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 "[x00][x00]??[x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][x00]"
 ├"[x00]00??00[x00][x00][x00][x00][x0F][x0F]0"
 ├"00000[x0C][x0C][x00][x00]??[x03][x03]"
 40
 231
-AGRAPH
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 "[x0C][x0C]00[x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][x00]"
 ├"[x00][x00][x00][x00][x00][x0F][x0F]000000[x0F]"
 ├"[x0F][x00][x00][x0F][x0F]00[x0F][x0F]00[x0F][x0F]"
 40
 273
-AGRAPH
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 "[x00][x00]??[x00][x00][x00][x00][x00][x00]??[x00][x00][x00]"
 ├"[x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][x00]??[x03]"
 ├"[x03][x03][x03][x03][x03][x00][x00][x00][x00][x00][x00]00"
 40
 315
-AGRAPH
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 "??00[x00][x00][x00][x00][x0F][x0F]33333"
 ├"3[x03][x03][x00][x00][x0F][x0F]000000[x0C]"
 ├"[x0C][x00][x00][x0F][x0F]333333[x03][x03]"
 40
 357
-AGRAPH
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 RTN
-LBL 60
+LBL 60                    'build glyph tables
 1141
-STO 03
+STO 03                    'temp / pointer
 "[x00] TTTx"
 ASTO IND 03
 1
-STO+ 03
+STO+ 03                   'temp / pointer
 "[x00][x7F]HDD8"
 ASTO IND 03
 1
-STO+ 03
+STO+ 03                   'temp / pointer
 "[x00]8DDD "
 ASTO IND 03
 1
-STO+ 03
+STO+ 03                   'temp / pointer
 "[x00]8DDH[x7F]"
 ASTO IND 03
 1
-STO+ 03
+STO+ 03                   'temp / pointer
 "[x00]8TTT[x18]"
 ASTO IND 03
 1
-STO+ 03
+STO+ 03                   'temp / pointer
 "[x00][x08]~[x09][x01][x02]"
 ASTO IND 03
 1
-STO+ 03
+STO+ 03                   'temp / pointer
 "[x00][x0C]RRR>"
 ASTO IND 03
 1
-STO+ 03
+STO+ 03                   'temp / pointer
 "[x00][x7F][x08][x04][x04]x"
 ASTO IND 03
 1
-STO+ 03
+STO+ 03                   'temp / pointer
 1151
-STO 03
+STO 03                    'temp / pointer
 "[x00][x00]B[x7F]@[x00]"
 ASTO IND 03
 1
-STO+ 03
+STO+ 03                   'temp / pointer
 "[x00]BaQIF"
 ASTO IND 03
 1
-STO+ 03
+STO+ 03                   'temp / pointer
 "[x00]AIII6"
 ASTO IND 03
 1
-STO+ 03
+STO+ 03                   'temp / pointer
 "[x00][x18][x14][x12][x7F][x10]"
 ASTO IND 03
 1
-STO+ 03
+STO+ 03                   'temp / pointer
 "[x00]'EEE9"
 ASTO IND 03
 1
-STO+ 03
+STO+ 03                   'temp / pointer
 "[x00]<JII0"
 ASTO IND 03
 1
-STO+ 03
+STO+ 03                   'temp / pointer
 "[x00][x01]q[x09][x05][x03]"
 ASTO IND 03
 1
-STO+ 03
+STO+ 03                   'temp / pointer
 "[x00]6III6"
 ASTO IND 03
 1
-STO+ 03
+STO+ 03                   'temp / pointer
 1160
-STO 03
+STO 03                    'temp / pointer
 "[x00][x00][x00][x00]00"
 ASTO IND 03
 1
-STO+ 03
+STO+ 03                   'temp / pointer
 "0000[xC0][xC0]"
 ASTO IND 03
 1
-STO+ 03
+STO+ 03                   'temp / pointer
 "[x00][x00][x0C][x0C]33"
 ASTO IND 03
 1
-STO+ 03
+STO+ 03                   'temp / pointer
 "3333??"
 ASTO IND 03
 1
-STO+ 03
+STO+ 03                   'temp / pointer
 "[x00][x00][xFF][xFF][xC0][xC0]"
 ASTO IND 03
 1
-STO+ 03
+STO+ 03                   'temp / pointer
 "0000[xC0][xC0]"
 ASTO IND 03
 1
-STO+ 03
+STO+ 03                   'temp / pointer
 "[x00][x00]??00"
 ASTO IND 03
 1
-STO+ 03
+STO+ 03                   'temp / pointer
 "0000[x0F][x0F]"
 ASTO IND 03
 1
-STO+ 03
+STO+ 03                   'temp / pointer
 "[x00][x00][xC0][xC0]00"
 ASTO IND 03
 1
-STO+ 03
+STO+ 03                   'temp / pointer
 "0000[x00][x00]"
 ASTO IND 03
 1
-STO+ 03
+STO+ 03                   'temp / pointer
 "[x00][x00][x0F][x0F]00"
 ASTO IND 03
 1
-STO+ 03
+STO+ 03                   'temp / pointer
 "0000[x0C][x0C]"
 ASTO IND 03
 1
-STO+ 03
+STO+ 03                   'temp / pointer
 "[x00][x00][xC0][xC0]00"
 ASTO IND 03
 1
-STO+ 03
+STO+ 03                   'temp / pointer
 "00[xC0][xC0][xFF][xFF]"
 ASTO IND 03
 1
-STO+ 03
+STO+ 03                   'temp / pointer
 "[x00][x00][x0F][x0F]00"
 ASTO IND 03
 1
-STO+ 03
+STO+ 03                   'temp / pointer
 "0000??"
 ASTO IND 03
 1
-STO+ 03
+STO+ 03                   'temp / pointer
 "[x00][x00][xC0][xC0]00"
 ASTO IND 03
 1
-STO+ 03
+STO+ 03                   'temp / pointer
 "0000[xC0][xC0]"
 ASTO IND 03
 1
-STO+ 03
+STO+ 03                   'temp / pointer
 "[x00][x00][x0F][x0F]33"
 ASTO IND 03
 1
-STO+ 03
+STO+ 03                   'temp / pointer
 "3333[x03][x03]"
 ASTO IND 03
 1
-STO+ 03
+STO+ 03                   'temp / pointer
 "[x00][x00][xC0][xC0][xFC][xFC]"
 ASTO IND 03
 1
-STO+ 03
+STO+ 03                   'temp / pointer
 CLA
 ├"[xC3][xC3][x03][x03][x0C][x0C]"
 ASTO IND 03
 1
-STO+ 03
+STO+ 03                   'temp / pointer
 "[x00][x00][x00][x00]??"
 ASTO IND 03
 1
-STO+ 03
+STO+ 03                   'temp / pointer
 "[x00][x00][x00][x00][x00][x00]"
 ASTO IND 03
 1
-STO+ 03
+STO+ 03                   'temp / pointer
 "[x00][x00][xF0][xF0][x0C][x0C]"
 ASTO IND 03
 1
-STO+ 03
+STO+ 03                   'temp / pointer
 "[x0C][x0C][x0C][x0C][xFC][xFC]"
 ASTO IND 03
 1
-STO+ 03
+STO+ 03                   'temp / pointer
 "[x00][x00][x00][x00]33"
 ASTO IND 03
 1
-STO+ 03
+STO+ 03                   'temp / pointer
 "3333[x0F][x0F]"
 ASTO IND 03
 1
-STO+ 03
+STO+ 03                   'temp / pointer
 "[x00][x00][xFF][xFF][xC0][xC0]"
 ASTO IND 03
 1
-STO+ 03
+STO+ 03                   'temp / pointer
 "0000[xC0][xC0]"
 ASTO IND 03
 1
-STO+ 03
+STO+ 03                   'temp / pointer
 "[x00][x00]??[x00][x00]"
 ASTO IND 03
 1
-STO+ 03
+STO+ 03                   'temp / pointer
 "[x00][x00][x00][x00]??"
 ASTO IND 03
 1
-STO+ 03
+STO+ 03                   'temp / pointer
 "[x00][x00][x00][x00][x0C][x0C]"
 ASTO IND 03
 1
-STO+ 03
+STO+ 03                   'temp / pointer
 CLA
 ├"[xFF][xFF][x00][x00][x00][x00]"
 ASTO IND 03
 1
-STO+ 03
+STO+ 03                   'temp / pointer
 "[x00][x00][x00][x00]00"
 ASTO IND 03
 1
-STO+ 03
+STO+ 03                   'temp / pointer
 "??00[x00][x00]"
 ASTO IND 03
 1
-STO+ 03
+STO+ 03                   'temp / pointer
 "[x00][x00][x0C][x0C][x03][x03]"
 ASTO IND 03
 1
-STO+ 03
+STO+ 03                   'temp / pointer
 "[x03][x03][xC3][xC3]<<"
 ASTO IND 03
 1
-STO+ 03
+STO+ 03                   'temp / pointer
 "[x00][x00]00<<"
 ASTO IND 03
 1
-STO+ 03
+STO+ 03                   'temp / pointer
 "330000"
 ASTO IND 03
 1
-STO+ 03
+STO+ 03                   'temp / pointer
 "[x00][x00][x03][x03][xC3][xC3]"
 ASTO IND 03
 1
-STO+ 03
+STO+ 03                   'temp / pointer
 CLA
 ├"[xC3][xC3][xC3][xC3]<<"
 ASTO IND 03
 1
-STO+ 03
+STO+ 03                   'temp / pointer
 "[x00][x00]0000"
 ASTO IND 03
 1
-STO+ 03
+STO+ 03                   'temp / pointer
 "0000[x0F][x0F]"
 ASTO IND 03
 1
-STO+ 03
+STO+ 03                   'temp / pointer
 "[x00][x00][xC0][xC0]00"
 ASTO IND 03
 1
-STO+ 03
+STO+ 03                   'temp / pointer
 "[x0C][x0C][xFF][xFF][x00][x00]"
 ASTO IND 03
 1
-STO+ 03
+STO+ 03                   'temp / pointer
 "[x00][x00][x03][x03][x03][x03]"
 ASTO IND 03
 1
-STO+ 03
+STO+ 03                   'temp / pointer
 "[x03][x03]??[x03][x03]"
 ASTO IND 03
 1
-STO+ 03
+STO+ 03                   'temp / pointer
 "[x00][x00]??33"
 ASTO IND 03
 1
-STO+ 03
+STO+ 03                   'temp / pointer
 "3333[xC3][xC3]"
 ASTO IND 03
 1
-STO+ 03
+STO+ 03                   'temp / pointer
 "[x00][x00][x0C][x0C]00"
 ASTO IND 03
 1
-STO+ 03
+STO+ 03                   'temp / pointer
 "0000[x0F][x0F]"
 ASTO IND 03
 1
-STO+ 03
+STO+ 03                   'temp / pointer
 "[x00][x00][xF0][xF0][xCC][xCC]"
 ASTO IND 03
 1
-STO+ 03
+STO+ 03                   'temp / pointer
 CLA
 ├"[xC3][xC3][xC3][xC3][x00][x00]"
 ASTO IND 03
 1
-STO+ 03
+STO+ 03                   'temp / pointer
 "[x00][x00][x0F][x0F]00"
 ASTO IND 03
 1
-STO+ 03
+STO+ 03                   'temp / pointer
 "0000[x0F][x0F]"
 ASTO IND 03
 1
-STO+ 03
+STO+ 03                   'temp / pointer
 "[x00][x00][x03][x03][x03][x03]"
 ASTO IND 03
 1
-STO+ 03
+STO+ 03                   'temp / pointer
 CLA
 ├"[xC3][xC3]33[x0F][x0F]"
 ASTO IND 03
 1
-STO+ 03
+STO+ 03                   'temp / pointer
 "[x00][x00][x00][x00]??"
 ASTO IND 03
 1
-STO+ 03
+STO+ 03                   'temp / pointer
 "[x00][x00][x00][x00][x00][x00]"
 ASTO IND 03
 1
-STO+ 03
+STO+ 03                   'temp / pointer
 "[x00][x00]<<[xC3][xC3]"
 ASTO IND 03
 1
-STO+ 03
+STO+ 03                   'temp / pointer
 CLA
 ├"[xC3][xC3][xC3][xC3]<<"
 ASTO IND 03
 1
-STO+ 03
+STO+ 03                   'temp / pointer
 "[x00][x00][x0F][x0F]00"
 ASTO IND 03
 1
-STO+ 03
+STO+ 03                   'temp / pointer
 "0000[x0F][x0F]"
 ASTO IND 03
 1
-STO+ 03
+STO+ 03                   'temp / pointer
 RTN
-LBL 61
-RCL 13
+LBL 61                    'draw sprite R13
+RCL 13                    'temp / sprite code / capture key
 15
 X≤Y?
-GTO 75
-RCL 13
+GTO 75                    '-> sprite search tree
+RCL 13                    'temp / sprite code / capture key
 7
 X≤Y?
-GTO 68
-RCL 13
+GTO 68                    '-> sprite search tree
+RCL 13                    'temp / sprite code / capture key
 3
 X≤Y?
-GTO 64
-RCL 13
+GTO 64                    '-> sprite search tree
+RCL 13                    'temp / sprite code / capture key
 1
 X≤Y?
-GTO 62
-GTO 89
-LBL 62
-RCL 13
+GTO 62                    '-> sprite search tree
+GTO 89                    '-> sprite: black K on light
+LBL 62                    'sprite search tree
+RCL 13                    'temp / sprite code / capture key
 2
 X≤Y?
-GTO 63
-GTO 90
-LBL 63
-GTO 91
-LBL 64
-RCL 13
+GTO 63                    '-> sprite search tree
+GTO 90                    '-> sprite: black K on dark
+LBL 63                    'sprite search tree
+GTO 91                    '-> sprite: black Q on light
+LBL 64                    'sprite search tree
+RCL 13                    'temp / sprite code / capture key
 5
 X≤Y?
-GTO 66
-RCL 13
+GTO 66                    '-> sprite search tree
+RCL 13                    'temp / sprite code / capture key
 4
 X≤Y?
-GTO 65
-GTO 92
-LBL 65
-GTO 93
-LBL 66
-RCL 13
+GTO 65                    '-> sprite search tree
+GTO 92                    '-> sprite: black Q on dark
+LBL 65                    'sprite search tree
+GTO 93                    '-> sprite: black R on light
+LBL 66                    'sprite search tree
+RCL 13                    'temp / sprite code / capture key
 6
 X≤Y?
-GTO 67
-GTO 94
-LBL 67
-GTO 95
-LBL 68
-RCL 13
+GTO 67                    '-> sprite search tree
+GTO 94                    '-> sprite: black R on dark
+LBL 67                    'sprite search tree
+GTO 95                    '-> sprite: black B on light
+LBL 68                    'sprite search tree
+RCL 13                    'temp / sprite code / capture key
 10
 X≤Y?
-GTO 71
-RCL 13
+GTO 71                    '-> sprite search tree
+RCL 13                    'temp / sprite code / capture key
 8
 X≤Y?
-GTO 69
-GTO 96
-LBL 69
-RCL 13
+GTO 69                    '-> sprite search tree
+GTO 96                    '-> sprite: black B on dark
+LBL 69                    'sprite search tree
+RCL 13                    'temp / sprite code / capture key
 9
 X≤Y?
-GTO 70
-GTO 97
-LBL 70
-GTO 98
-LBL 71
-RCL 13
+GTO 70                    '-> sprite search tree
+GTO 97                    '-> sprite: black N on light
+LBL 70                    'sprite search tree
+GTO 98                    '-> sprite: black N on dark
+LBL 71                    'sprite search tree
+RCL 13                    'temp / sprite code / capture key
 13
 X≤Y?
-GTO 73
-RCL 13
+GTO 73                    '-> sprite search tree
+RCL 13                    'temp / sprite code / capture key
 11
 X≤Y?
-GTO 72
-GTO 99
-LBL 72
-GTO A
-LBL 73
-RCL 13
+GTO 72                    '-> sprite search tree
+GTO 99                    '-> sprite: black P on light
+LBL 72                    'sprite search tree
+GTO A                     '-> sprite: black P on dark
+LBL 73                    'sprite search tree
+RCL 13                    'temp / sprite code / capture key
 14
 X≤Y?
-GTO 74
-GTO B
-LBL 74
-GTO C
-LBL 75
-RCL 13
+GTO 74                    '-> sprite search tree
+GTO B                     '-> sprite: empty dark square
+LBL 74                    'sprite search tree
+GTO C                     '-> sprite: white P on light
+LBL 75                    'sprite search tree
+RCL 13                    'temp / sprite code / capture key
 22
 X≤Y?
-GTO 82
-RCL 13
+GTO 82                    '-> sprite search tree
+RCL 13                    'temp / sprite code / capture key
 18
 X≤Y?
-GTO 78
-RCL 13
+GTO 78                    '-> sprite search tree
+RCL 13                    'temp / sprite code / capture key
 16
 X≤Y?
-GTO 76
-GTO D
-LBL 76
-RCL 13
+GTO 76                    '-> sprite search tree
+GTO D                     '-> sprite: white P on dark
+LBL 76                    'sprite search tree
+RCL 13                    'temp / sprite code / capture key
 17
 X≤Y?
-GTO 77
-GTO E
-LBL 77
-GTO F
-LBL 78
-RCL 13
+GTO 77                    '-> sprite search tree
+GTO E                     '-> sprite: white N on light
+LBL 77                    'sprite search tree
+GTO F                     '-> sprite: white N on dark
+LBL 78                    'sprite search tree
+RCL 13                    'temp / sprite code / capture key
 20
 X≤Y?
-GTO 80
-RCL 13
+GTO 80                    '-> sprite search tree
+RCL 13                    'temp / sprite code / capture key
 19
 X≤Y?
-GTO 79
-GTO G
-LBL 79
-GTO H
-LBL 80
-RCL 13
+GTO 79                    '-> sprite search tree
+GTO G                     '-> sprite: white B on light
+LBL 79                    'sprite search tree
+GTO H                     '-> sprite: white B on dark
+LBL 80                    'sprite search tree
+RCL 13                    'temp / sprite code / capture key
 21
 X≤Y?
-GTO 81
-GTO I
-LBL 81
-GTO J
-LBL 82
-RCL 13
+GTO 81                    '-> sprite search tree
+GTO I                     '-> sprite: white R on light
+LBL 81                    'sprite search tree
+GTO J                     '-> sprite: white R on dark
+LBL 82                    'sprite search tree
+RCL 13                    'temp / sprite code / capture key
 25
 X≤Y?
-GTO 85
-RCL 13
+GTO 85                    '-> sprite search tree
+RCL 13                    'temp / sprite code / capture key
 23
 X≤Y?
-GTO 83
-GTO a
-LBL 83
-RCL 13
+GTO 83                    '-> sprite search tree
+GTO a                     '-> sprite: white Q on light
+LBL 83                    'sprite search tree
+RCL 13                    'temp / sprite code / capture key
 24
 X≤Y?
-GTO 84
-GTO b
-LBL 84
-GTO c
-LBL 85
-RCL 13
+GTO 84                    '-> sprite search tree
+GTO b                     '-> sprite: white Q on dark
+LBL 84                    'sprite search tree
+GTO c                     '-> sprite: white K on light
+LBL 85                    'sprite search tree
+RCL 13                    'temp / sprite code / capture key
 27
 X≤Y?
-GTO 87
-RCL 13
+GTO 87                    '-> sprite search tree
+RCL 13                    'temp / sprite code / capture key
 26
 X≤Y?
-GTO 86
-GTO d
-LBL 86
-GTO e
-LBL 87
-RCL 13
+GTO 86                    '-> sprite search tree
+GTO d                     '-> sprite: white K on dark
+LBL 86                    'sprite search tree
+GTO e                     '-> sprite: cursor frame
+LBL 87                    'sprite search tree
+RCL 13                    'temp / sprite code / capture key
 28
 X≤Y?
-GTO 88
-GTO 00
-LBL 88
-GTO 01
-LBL 89
+GTO 88                    '-> sprite search tree
+GTO 00                    '-> sprite: last-move corners
+LBL 88                    'sprite search tree
+GTO 01                    '-> sprite: selected piece
+LBL 89                    'sprite: black K on light
 CLA
 ├"[x80][xC0][xD0][xF8][xF8][xD0][xC0][x80]"
-RCL 51
-RCL 52
+RCL 51                    'draw row (y)
+RCL 52                    'draw column (x)
 9
 +
-AGRAPH
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 "[x1C]>~[xFE][xFE][xFD][xFD][xFF][xFF][xFF][xFF][xFD][xFD][xFE][xFE]"
 ├"~>[x18]"
-RCL 51
+RCL 51                    'draw row (y)
 8
 +
-RCL 52
+RCL 52                    'draw column (x)
 4
 +
-AGRAPH
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 "[x18][x1C][x1F][x1F][x1F][x1F][x1F][x1F][x1F][x1F][x1F][x1F][x1C][x18]"
-RCL 51
+RCL 51                    'draw row (y)
 16
 +
-RCL 52
+RCL 52                    'draw column (x)
 6
 +
-AGRAPH
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 RTN
-LBL 90
+LBL 90                    'sprite: black K on dark
 "U[x00]U[x00]U[x00]U[x00][x15][x80][xC5][xD0][xF9][xF8][xD1]"
 ├"[xC0][x95][x00]U[x00]U[x00]U[x00]U"
-RCL 51
-RCL 52
-AGRAPH
+RCL 51                    'draw row (y)
+RCL 52                    'draw column (x)
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 "U[x00]U[x00][x1C]>~[xFE][xFE][xFD][xFD][xFF][xFF][xFF][xFF]"
 ├"[xFD][xFD][xFE][xFE]~>[x18]A[x00]U"
-RCL 51
+RCL 51                    'draw row (y)
 8
 +
-RCL 52
-AGRAPH
+RCL 52                    'draw column (x)
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 "U[x00]U[x00]U[x00]X[x1C]_[x1F]_[x1F]_[x1F]_"
 ├"[x1F]_[x1F]\[x18]A[x00]U[x00]U"
-RCL 51
+RCL 51                    'draw row (y)
 16
 +
-RCL 52
-AGRAPH
+RCL 52                    'draw column (x)
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 "[x01][x00][x01][x00][x01][x00][x01][x00][x01][x00][x01][x00][x01][x00][x01]"
 ├"[x00][x01][x00][x01][x00][x01][x00][x01][x00][x01]"
-RCL 51
+RCL 51                    'draw row (y)
 24
 +
-RCL 52
-AGRAPH
+RCL 52                    'draw column (x)
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 RTN
-LBL 91
+LBL 91                    'sprite: black Q on light
 "0[xF0][x80][x00][x00][x00][xC0][xF0][xF0][xC0][x00][x00][x00][x80][xF0]"
 ├"0"
-RCL 51
-RCL 52
+RCL 51                    'draw row (y)
+RCL 52                    'draw column (x)
 5
 +
-AGRAPH
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 "[x03][x1F]~[xFC][xFE][xFF][xFF][xFF][xFF][xFE][xFC]~[x1F][x03]"
-RCL 51
+RCL 51                    'draw row (y)
 8
 +
-RCL 52
+RCL 52                    'draw column (x)
 6
 +
-AGRAPH
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 "[x18][x1C][x1E][x1F][x1F][x1F][x1F][x1F][x1F][x1F][x1F][x1F][x1F][x1E][x1C]"
 ├"[x18]"
-RCL 51
+RCL 51                    'draw row (y)
 16
 +
-RCL 52
+RCL 52                    'draw column (x)
 5
 +
-AGRAPH
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 RTN
-LBL 92
+LBL 92                    'sprite: black Q on dark
 "U[x00]U[x00][x05]0[xF5][x80][x15][x00][x15][xC0][xF5][xF0][xC5]"
 ├"[x00]U[x00][x85][xF0]5[x00]U[x00]U"
-RCL 51
-RCL 52
-AGRAPH
+RCL 51                    'draw row (y)
+RCL 52                    'draw column (x)
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 "U[x00]U[x00]U[x00]C[x1F]~[xFC][xFE][xFF][xFF][xFF][xFF]"
 ├"[xFE][xFC]~[x1F][x03]P[x00]U[x00]U"
-RCL 51
+RCL 51                    'draw row (y)
 8
 +
-RCL 52
-AGRAPH
+RCL 52                    'draw column (x)
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 "U[x00]U[x00]A[x18]\[x1E]_[x1F]_[x1F]_[x1F]_"
 ├"[x1F]_[x1F]^[x1C]Y[x00]U[x00]U"
-RCL 51
+RCL 51                    'draw row (y)
 16
 +
-RCL 52
-AGRAPH
+RCL 52                    'draw column (x)
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 "[x01][x00][x01][x00][x01][x00][x01][x00][x01][x00][x01][x00][x01][x00][x01]"
 ├"[x00][x01][x00][x01][x00][x01][x00][x01][x00][x01]"
-RCL 51
+RCL 51                    'draw row (y)
 24
 +
-RCL 52
-AGRAPH
+RCL 52                    'draw column (x)
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 RTN
-LBL 93
+LBL 93                    'sprite: black R on light
 CLA
 ├"[xF0][xF0][xF0][x80][x80][xF0][xF0][xF0][xF0][x80][x80][xF0][xF0][xF0]"
-RCL 51
-RCL 52
+RCL 51                    'draw row (y)
+RCL 52                    'draw column (x)
 6
 +
-AGRAPH
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 "[x01][x03][xFF][xFF][xFF][xFF][xFF][xFF][xFF][xFF][xFF][xFF][x03][x01]"
-RCL 51
+RCL 51                    'draw row (y)
 8
 +
-RCL 52
+RCL 52                    'draw column (x)
 6
 +
-AGRAPH
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 "[x18][x1C][x1E][x1F][x1F][x1F][x1F][x1F][x1F][x1F][x1F][x1F][x1F][x1E][x1C]"
 ├"[x18]"
-RCL 51
+RCL 51                    'draw row (y)
 16
 +
-RCL 52
+RCL 52                    'draw column (x)
 5
 +
-AGRAPH
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 RTN
-LBL 94
+LBL 94                    'sprite: black R on dark
 "U[x00]U[x00]U[x00][xF5][xF0][xF5][x80][x85][xF0][xF5][xF0][xF5]"
 ├"[x80][x85][xF0][xF5][xF0][x05][x00]U[x00]U"
-RCL 51
-RCL 52
-AGRAPH
+RCL 51                    'draw row (y)
+RCL 52                    'draw column (x)
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 "U[x00]U[x00]U[x00]Q[x03][xFF][xFF][xFF][xFF][xFF][xFF][xFF]"
 ├"[xFF][xFF][xFF][x03][x01]T[x00]U[x00]U"
-RCL 51
+RCL 51                    'draw row (y)
 8
 +
-RCL 52
-AGRAPH
+RCL 52                    'draw column (x)
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 "U[x00]U[x00]A[x18]\[x1E]_[x1F]_[x1F]_[x1F]_"
 ├"[x1F]_[x1F]^[x1C]Y[x00]U[x00]U"
-RCL 51
+RCL 51                    'draw row (y)
 16
 +
-RCL 52
-AGRAPH
+RCL 52                    'draw column (x)
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 "[x01][x00][x01][x00][x01][x00][x01][x00][x01][x00][x01][x00][x01][x00][x01]"
 ├"[x00][x01][x00][x01][x00][x01][x00][x01][x00][x01]"
-RCL 51
+RCL 51                    'draw row (y)
 24
 +
-RCL 52
-AGRAPH
+RCL 52                    'draw column (x)
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 RTN
-LBL 95
+LBL 95                    'sprite: black B on light
 CLA
 ├"[xC0][xE0][xF0]x[xB8][xF0][xE0][xC0]"
-RCL 51
-RCL 52
+RCL 51                    'draw row (y)
+RCL 52                    'draw column (x)
 9
 +
-AGRAPH
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 "[x07][x8F][xDD][xFE][xFF][xFF][xFF][xDF][x8F][x07]"
-RCL 51
+RCL 51                    'draw row (y)
 8
 +
-RCL 52
+RCL 52                    'draw column (x)
 8
 +
-AGRAPH
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 "[x18][x18][x1C][x1C][x1F][x1F][x1F][x1F][x1F][x1F][x1C][x1C][x18][x18]"
-RCL 51
+RCL 51                    'draw row (y)
 16
 +
-RCL 52
+RCL 52                    'draw column (x)
 6
 +
-AGRAPH
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 RTN
-LBL 96
+LBL 96                    'sprite: black B on dark
 "U[x00]U[x00]U[x00]U[x00][x15][xC0][xE5][xF0]y[xB8][xF1]"
 ├"[xE0][xC5][x00]U[x00]U[x00]U[x00]U"
-RCL 51
-RCL 52
-AGRAPH
+RCL 51                    'draw row (y)
+RCL 52                    'draw column (x)
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 "U[x00]U[x00]U[x00]U[x00][x07][x8F][xDD][xFE][xFF][xFF][xFF]"
 ├"[xDF][x8F][x07]P[x00]U[x00]U[x00]U"
-RCL 51
+RCL 51                    'draw row (y)
 8
 +
-RCL 52
-AGRAPH
+RCL 52                    'draw column (x)
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 "U[x00]U[x00]U[x00]Y[x18]\[x1C]_[x1F]_[x1F]_"
 ├"[x1F]\[x1C]Y[x18]A[x00]U[x00]U"
-RCL 51
+RCL 51                    'draw row (y)
 16
 +
-RCL 52
-AGRAPH
+RCL 52                    'draw column (x)
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 "[x01][x00][x01][x00][x01][x00][x01][x00][x01][x00][x01][x00][x01][x00][x01]"
 ├"[x00][x01][x00][x01][x00][x01][x00][x01][x00][x01]"
-RCL 51
+RCL 51                    'draw row (y)
 24
 +
-RCL 52
-AGRAPH
+RCL 52                    'draw column (x)
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 RTN
-LBL 97
+LBL 97                    'sprite: black N on light
 CLA
 ├"[x80][xC0][xE0][xF0][xE0][xE0][xF0][xE0][xE0][xE0][xC0][x80]"
-RCL 51
-RCL 52
+RCL 51                    'draw row (y)
+RCL 52                    'draw column (x)
 7
 +
-AGRAPH
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 "[x0C][x1E]??[x1F][x9F][xCF][xEF][xFF][xFE][xFF][xFF][xFF][xFF][xFF]"
 ├"[xFC]p"
-RCL 51
+RCL 51                    'draw row (y)
 8
 +
-RCL 52
+RCL 52                    'draw column (x)
 4
 +
-AGRAPH
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 "08???????????80"
-RCL 51
+RCL 51                    'draw row (y)
 16
 +
-RCL 52
+RCL 52                    'draw column (x)
 6
 +
-AGRAPH
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 RTN
-LBL 98
+LBL 98                    'sprite: black N on dark
 "U[x00]U[x00]U[x00][x15][x80][xC5][xE0][xF5][xE0][xE5][xF0][xE5]"
 ├"[xE0][xE5][xC0][x95][x00]U[x00]U[x00]U"
-RCL 51
-RCL 52
-AGRAPH
+RCL 51                    'draw row (y)
+RCL 52                    'draw column (x)
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 "U[x00]U[x00]L[x1E]??[x1F][x9F][xCF][xEF][xFF][xFE][xFF]"
 ├"[xFF][xFF][xFF][xFF][xFC]q[x00]U[x00]U"
-RCL 51
+RCL 51                    'draw row (y)
 8
 +
-RCL 52
-AGRAPH
+RCL 52                    'draw column (x)
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 "U[x00]U[x00]U[x00]18???????"
 ├"????80[x00]U[x00]U"
-RCL 51
+RCL 51                    'draw row (y)
 16
 +
-RCL 52
-AGRAPH
+RCL 52                    'draw column (x)
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 "[x01][x00][x01][x00][x01][x00][x01][x00][x01][x00][x01][x00][x01][x00][x01]"
 ├"[x00][x01][x00][x01][x00][x01][x00][x01][x00][x01]"
-RCL 51
+RCL 51                    'draw row (y)
 24
 +
-RCL 52
-AGRAPH
+RCL 52                    'draw column (x)
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 RTN
-LBL 99
+LBL 99                    'sprite: black P on light
 CLA
 ├"[x80][xC0][xC0][xC0][xC0][x80]"
-RCL 51
-RCL 52
+RCL 51                    'draw row (y)
+RCL 52                    'draw column (x)
 10
 +
-AGRAPH
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 CLA
 ├"[x90][xFB][xFF][xFF][xFF][xFF][xFB][x90]"
-RCL 51
+RCL 51                    'draw row (y)
 8
 +
-RCL 52
+RCL 52                    'draw column (x)
 9
 +
-AGRAPH
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 "[x18][x1E][x1F][x1F][x1F][x1F][x1F][x1F][x1F][x1F][x1F][x1F][x1E][x18]"
-RCL 51
+RCL 51                    'draw row (y)
 16
 +
-RCL 52
+RCL 52                    'draw column (x)
 6
 +
-AGRAPH
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 RTN
-LBL A
+LBL A                     'sprite: black P on dark
 "U[x00]U[x00]U[x00]U[x00]U[x00][x95][xC0][xD5][xC0][xD5]"
 ├"[x80][x15][x00]U[x00]U[x00]U[x00]U"
-RCL 51
-RCL 52
-AGRAPH
+RCL 51                    'draw row (y)
+RCL 52                    'draw column (x)
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 "U[x00]U[x00]U[x00]U[x00][x05][x90][xFB][xFF][xFF][xFF][xFF]"
 ├"[xFB][x90][x00]U[x00]U[x00]U[x00]U"
-RCL 51
+RCL 51                    'draw row (y)
 8
 +
-RCL 52
-AGRAPH
+RCL 52                    'draw column (x)
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 "U[x00]U[x00]U[x00]X[x1E]_[x1F]_[x1F]_[x1F]_"
 ├"[x1F]_[x1F]^[x18]A[x00]U[x00]U"
-RCL 51
+RCL 51                    'draw row (y)
 16
 +
-RCL 52
-AGRAPH
+RCL 52                    'draw column (x)
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 "[x01][x00][x01][x00][x01][x00][x01][x00][x01][x00][x01][x00][x01][x00][x01]"
 ├"[x00][x01][x00][x01][x00][x01][x00][x01][x00][x01]"
-RCL 51
+RCL 51                    'draw row (y)
 24
 +
-RCL 52
-AGRAPH
+RCL 52                    'draw column (x)
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 RTN
-LBL B
+LBL B                     'sprite: empty dark square
 "U[x00]U[x00]U[x00]U[x00]U[x00]U[x00]U[x00]U"
 ├"[x00]U[x00]U[x00]U[x00]U[x00]U"
-RCL 51
-RCL 52
-AGRAPH
+RCL 51                    'draw row (y)
+RCL 52                    'draw column (x)
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 "U[x00]U[x00]U[x00]U[x00]U[x00]U[x00]U[x00]U"
 ├"[x00]U[x00]U[x00]U[x00]U[x00]U"
-RCL 51
+RCL 51                    'draw row (y)
 8
 +
-RCL 52
-AGRAPH
+RCL 52                    'draw column (x)
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 "U[x00]U[x00]U[x00]U[x00]U[x00]U[x00]U[x00]U"
 ├"[x00]U[x00]U[x00]U[x00]U[x00]U"
-RCL 51
+RCL 51                    'draw row (y)
 16
 +
-RCL 52
-AGRAPH
+RCL 52                    'draw column (x)
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 "[x01][x00][x01][x00][x01][x00][x01][x00][x01][x00][x01][x00][x01][x00][x01]"
 ├"[x00][x01][x00][x01][x00][x01][x00][x01][x00][x01]"
-RCL 51
+RCL 51                    'draw row (y)
 24
 +
-RCL 52
-AGRAPH
+RCL 52                    'draw column (x)
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 RTN
-LBL C
+LBL C                     'sprite: white P on light
 CLA
 ├"[x80]@@@@[x80]"
-RCL 51
-RCL 52
+RCL 51                    'draw row (y)
+RCL 52                    'draw column (x)
 10
 +
-AGRAPH
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 CLA
 ├"[x90]k[x04][x00][x00][x04]k[x90]"
-RCL 51
+RCL 51                    'draw row (y)
 8
 +
-RCL 52
+RCL 52                    'draw column (x)
 9
 +
-AGRAPH
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 "[x18][x16][x11][x10][x10][x10][x10][x10][x10][x10][x10][x11][x16][x18]"
-RCL 51
+RCL 51                    'draw row (y)
 16
 +
-RCL 52
+RCL 52                    'draw column (x)
 6
 +
-AGRAPH
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 RTN
-LBL D
+LBL D                     'sprite: white P on dark
 "U[x00]U[x00]U[x00]U[x00]U[x00][x95]@U@U"
 ├"[x80][x15][x00]U[x00]U[x00]U[x00]U"
-RCL 51
-RCL 52
-AGRAPH
+RCL 51                    'draw row (y)
+RCL 52                    'draw column (x)
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 "U[x00]U[x00]U[x00]U[x00][x05][x90]k[x04][x00][x00][x04]"
 ├"k[x90][x00]U[x00]U[x00]U[x00]U"
-RCL 51
+RCL 51                    'draw row (y)
 8
 +
-RCL 52
-AGRAPH
+RCL 52                    'draw column (x)
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 "U[x00]U[x00]U[x00]X[x16]Q[x10]P[x10]P[x10]P"
 ├"[x10]P[x11]V[x18]A[x00]U[x00]U"
-RCL 51
+RCL 51                    'draw row (y)
 16
 +
-RCL 52
-AGRAPH
+RCL 52                    'draw column (x)
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 "[x01][x00][x01][x00][x01][x00][x01][x00][x01][x00][x01][x00][x01][x00][x01]"
 ├"[x00][x01][x00][x01][x00][x01][x00][x01][x00][x01]"
-RCL 51
+RCL 51                    'draw row (y)
 24
 +
-RCL 52
-AGRAPH
+RCL 52                    'draw column (x)
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 RTN
-LBL E
+LBL E                     'sprite: white N on light
 CLA
 ├"[x80]@ [x10]  [x90]   @[x80]"
-RCL 51
-RCL 52
+RCL 51                    'draw row (y)
+RCL 52                    'draw column (x)
 7
 +
-AGRAPH
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 "[x0C][x12]! [x10][x90]H([x11][x02][x01][x00][x00][x00][x03]"
 ├"[x8C]p"
-RCL 51
+RCL 51                    'draw row (y)
 8
 +
-RCL 52
+RCL 52                    'draw column (x)
 4
 +
-AGRAPH
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 "0('         '(0"
-RCL 51
+RCL 51                    'draw row (y)
 16
 +
-RCL 52
+RCL 52                    'draw column (x)
 6
 +
-AGRAPH
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 RTN
-LBL F
+LBL F                     'sprite: white N on dark
 "U[x00]U[x00]U[x00][x15][x80]E [x15] %[x90]%"
 ├" %@[x95][x00]U[x00]U[x00]U"
-RCL 51
-RCL 52
-AGRAPH
+RCL 51                    'draw row (y)
+RCL 52                    'draw column (x)
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 "U[x00]U[x00]L[x12]! [x10][x90]H([x11][x02][x01]"
 ├"[x00][x00][x00][x03][x8C]q[x00]U[x00]U"
-RCL 51
+RCL 51                    'draw row (y)
 8
 +
-RCL 52
-AGRAPH
+RCL 52                    'draw column (x)
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 "U[x00]U[x00]U[x00]1('      "
 ├"   '(0[x00]U[x00]U"
-RCL 51
+RCL 51                    'draw row (y)
 16
 +
-RCL 52
-AGRAPH
+RCL 52                    'draw column (x)
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 "[x01][x00][x01][x00][x01][x00][x01][x00][x01][x00][x01][x00][x01][x00][x01]"
 ├"[x00][x01][x00][x01][x00][x01][x00][x01][x00][x01]"
-RCL 51
+RCL 51                    'draw row (y)
 24
 +
-RCL 52
-AGRAPH
+RCL 52                    'draw column (x)
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 RTN
-LBL G
+LBL G                     'sprite: white B on light
 CLA
 ├"[xC0] [x90]H[xA8]P [xC0]"
-RCL 51
-RCL 52
+RCL 51                    'draw row (y)
+RCL 52                    'draw column (x)
 9
 +
-AGRAPH
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 "[x07][x8A]U[x22][x01][x00] P[x88][x07]"
-RCL 51
+RCL 51                    'draw row (y)
 8
 +
-RCL 52
+RCL 52                    'draw column (x)
 8
 +
-AGRAPH
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 "[x18][x18][x14][x14][x13][x10][x10][x10][x10][x13][x14][x14][x18][x18]"
-RCL 51
+RCL 51                    'draw row (y)
 16
 +
-RCL 52
+RCL 52                    'draw column (x)
 6
 +
-AGRAPH
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 RTN
-LBL H
+LBL H                     'sprite: white B on dark
 "U[x00]U[x00]U[x00]U[x00][x15][xC0]%[x90]I[xA8]Q"
 ├" [xC5][x00]U[x00]U[x00]U[x00]U"
-RCL 51
-RCL 52
-AGRAPH
+RCL 51                    'draw row (y)
+RCL 52                    'draw column (x)
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 "U[x00]U[x00]U[x00]U[x00][x07][x8A]U[x22][x01][x00] "
 ├"P[x88][x07]P[x00]U[x00]U[x00]U"
-RCL 51
+RCL 51                    'draw row (y)
 8
 +
-RCL 52
-AGRAPH
+RCL 52                    'draw column (x)
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 "U[x00]U[x00]U[x00]Y[x18]T[x14]S[x10]P[x10]P"
 ├"[x13]T[x14]Y[x18]A[x00]U[x00]U"
-RCL 51
+RCL 51                    'draw row (y)
 16
 +
-RCL 52
-AGRAPH
+RCL 52                    'draw column (x)
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 "[x01][x00][x01][x00][x01][x00][x01][x00][x01][x00][x01][x00][x01][x00][x01]"
 ├"[x00][x01][x00][x01][x00][x01][x00][x01][x00][x01]"
-RCL 51
+RCL 51                    'draw row (y)
 24
 +
-RCL 52
-AGRAPH
+RCL 52                    'draw column (x)
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 RTN
-LBL I
+LBL I                     'sprite: white R on light
 CLA
 ├"[xF0][x10]p[x80][x80]p[x10][x10]p[x80][x80]p[x10][xF0]"
-RCL 51
-RCL 52
+RCL 51                    'draw row (y)
+RCL 52                    'draw column (x)
 6
 +
-AGRAPH
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 "[x01][x02][xFC][x00][x00][x00][x00][x00][x00][x00][x00][xFC][x02][x01]"
-RCL 51
+RCL 51                    'draw row (y)
 8
 +
-RCL 52
+RCL 52                    'draw column (x)
 6
 +
-AGRAPH
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 "[x18][x14][x12][x11][x10][x10][x10][x10][x10][x10][x10][x10][x11][x12][x14]"
 ├"[x18]"
-RCL 51
+RCL 51                    'draw row (y)
 16
 +
-RCL 52
+RCL 52                    'draw column (x)
 5
 +
-AGRAPH
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 RTN
-LBL J
+LBL J                     'sprite: white R on dark
 "U[x00]U[x00]U[x00][xF5][x10]u[x80][x85]p[x15][x10]u"
 ├"[x80][x85]p[x15][xF0][x05][x00]U[x00]U"
-RCL 51
-RCL 52
-AGRAPH
+RCL 51                    'draw row (y)
+RCL 52                    'draw column (x)
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 "U[x00]U[x00]U[x00]Q[x02][xFC][x00][x00][x00][x00][x00][x00]"
 ├"[x00][x00][xFC][x02][x01]T[x00]U[x00]U"
-RCL 51
+RCL 51                    'draw row (y)
 8
 +
-RCL 52
-AGRAPH
+RCL 52                    'draw column (x)
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 "U[x00]U[x00]A[x18]T[x12]Q[x10]P[x10]P[x10]P"
 ├"[x10]P[x11]R[x14]Y[x00]U[x00]U"
-RCL 51
+RCL 51                    'draw row (y)
 16
 +
-RCL 52
-AGRAPH
+RCL 52                    'draw column (x)
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 "[x01][x00][x01][x00][x01][x00][x01][x00][x01][x00][x01][x00][x01][x00][x01]"
 ├"[x00][x01][x00][x01][x00][x01][x00][x01][x00][x01]"
-RCL 51
+RCL 51                    'draw row (y)
 24
 +
-RCL 52
-AGRAPH
+RCL 52                    'draw column (x)
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 RTN
-LBL a
+LBL a                     'sprite: white Q on light
 "0[xF0][x80][x00][x00][x00][xC0]00[xC0][x00][x00][x00][x80][xF0]"
 ├"0"
-RCL 51
-RCL 52
+RCL 51                    'draw row (y)
+RCL 52                    'draw column (x)
 5
 +
-AGRAPH
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 "[x03][x1D]b[x84][x02][x01][x00][x00][x01][x02][x84]b[x1D][x03]"
-RCL 51
+RCL 51                    'draw row (y)
 8
 +
-RCL 52
+RCL 52                    'draw column (x)
 6
 +
-AGRAPH
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 "[x18][x14][x12][x11][x10][x10][x10][x10][x10][x10][x10][x10][x11][x12][x14]"
 ├"[x18]"
-RCL 51
+RCL 51                    'draw row (y)
 16
 +
-RCL 52
+RCL 52                    'draw column (x)
 5
 +
-AGRAPH
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 RTN
-LBL b
+LBL b                     'sprite: white Q on dark
 "U[x00]U[x00][x05]0[xF5][x80][x15][x00][x15][xC0]50[xC5]"
 ├"[x00]U[x00][x85][xF0]5[x00]U[x00]U"
-RCL 51
-RCL 52
-AGRAPH
+RCL 51                    'draw row (y)
+RCL 52                    'draw column (x)
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 "U[x00]U[x00]U[x00]C[x1D]b[x84][x02][x01][x00][x00][x01]"
 ├"[x02][x84]b[x1D][x03]P[x00]U[x00]U"
-RCL 51
+RCL 51                    'draw row (y)
 8
 +
-RCL 52
-AGRAPH
+RCL 52                    'draw column (x)
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 "U[x00]U[x00]A[x18]T[x12]Q[x10]P[x10]P[x10]P"
 ├"[x10]P[x11]R[x14]Y[x00]U[x00]U"
-RCL 51
+RCL 51                    'draw row (y)
 16
 +
-RCL 52
-AGRAPH
+RCL 52                    'draw column (x)
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 "[x01][x00][x01][x00][x01][x00][x01][x00][x01][x00][x01][x00][x01][x00][x01]"
 ├"[x00][x01][x00][x01][x00][x01][x00][x01][x00][x01]"
-RCL 51
+RCL 51                    'draw row (y)
 24
 +
-RCL 52
-AGRAPH
+RCL 52                    'draw column (x)
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 RTN
-LBL c
+LBL c                     'sprite: white K on light
 CLA
 ├"[x80]@P((P@[x80]"
-RCL 51
-RCL 52
+RCL 51                    'draw row (y)
+RCL 52                    'draw column (x)
 9
 +
-AGRAPH
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 "[x1C][x22]B[x82][x02][x05][x05][x02][x00][x00][x02][x05][x05][x02][x82]"
 ├"B&[x18]"
-RCL 51
+RCL 51                    'draw row (y)
 8
 +
-RCL 52
+RCL 52                    'draw column (x)
 4
 +
-AGRAPH
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 "[x18][x14][x13][x10][x10][x10][x10][x10][x10][x10][x10][x13][x14][x18]"
-RCL 51
+RCL 51                    'draw row (y)
 16
 +
-RCL 52
+RCL 52                    'draw column (x)
 6
 +
-AGRAPH
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 RTN
-LBL d
+LBL d                     'sprite: white K on dark
 "U[x00]U[x00]U[x00]U[x00][x15][x80]EP)(Q"
 ├"@[x95][x00]U[x00]U[x00]U[x00]U"
-RCL 51
-RCL 52
-AGRAPH
+RCL 51                    'draw row (y)
+RCL 52                    'draw column (x)
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 "U[x00]U[x00][x1C][x22]B[x82][x02][x05][x05][x02][x00][x00][x02]"
 ├"[x05][x05][x02][x82]B&[x18]A[x00]U"
-RCL 51
+RCL 51                    'draw row (y)
 8
 +
-RCL 52
-AGRAPH
+RCL 52                    'draw column (x)
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 "U[x00]U[x00]U[x00]X[x14]S[x10]P[x10]P[x10]P"
 ├"[x10]P[x13]T[x18]A[x00]U[x00]U"
-RCL 51
+RCL 51                    'draw row (y)
 16
 +
-RCL 52
-AGRAPH
+RCL 52                    'draw column (x)
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 "[x01][x00][x01][x00][x01][x00][x01][x00][x01][x00][x01][x00][x01][x00][x01]"
 ├"[x00][x01][x00][x01][x00][x01][x00][x01][x00][x01]"
-RCL 51
+RCL 51                    'draw row (y)
 24
 +
-RCL 52
-AGRAPH
+RCL 52                    'draw column (x)
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 RTN
-LBL e
+LBL e                     'sprite: cursor frame
 CLA
 ├"[xFF][xFF][x03][x03][x03][x03][x03][x03][x03][x03][x03][x03][x03][x03]"
 ├"[x03][x03][x03][x03][x03][x03][x03][x03][x03][x03][xFF][xFF]"
-RCL 51
-RCL 52
-AGRAPH
+RCL 51                    'draw row (y)
+RCL 52                    'draw column (x)
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 CLA
 ├"[xFF][xFF][x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][x00]"
 ├"[x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][xFF][xFF]"
-RCL 51
+RCL 51                    'draw row (y)
 8
 +
-RCL 52
-AGRAPH
+RCL 52                    'draw column (x)
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 CLA
 ├"[xFF][xFF][x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][x00]"
 ├"[x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][xFF][xFF]"
-RCL 51
+RCL 51                    'draw row (y)
 16
 +
-RCL 52
-AGRAPH
+RCL 52                    'draw column (x)
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 "[x03][x03][x03][x03][x03][x03][x03][x03][x03][x03][x03][x03][x03][x03][x03]"
 ├"[x03][x03][x03][x03][x03][x03][x03][x03][x03][x03][x03]"
-RCL 51
+RCL 51                    'draw row (y)
 24
 +
-RCL 52
-AGRAPH
+RCL 52                    'draw column (x)
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 RTN
-LBL 00
+LBL 00                    'sprite: last-move corners
 CLA
 ├"[x7F][x7F][x03][x03][x03][x03][x03][x00][x00][x00][x00][x00][x00][x00]"
 ├"[x00][x00][x00][x00][x00][x03][x03][x03][x03][x03][x7F][x7F]"
-RCL 51
-RCL 52
-AGRAPH
+RCL 51                    'draw row (y)
+RCL 52                    'draw column (x)
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 CLA
 ├"[xF8][xF8][x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][x00]"
 ├"[x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][xF8][xF8]"
-RCL 51
+RCL 51                    'draw row (y)
 16
 +
-RCL 52
-AGRAPH
+RCL 52                    'draw column (x)
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 "[x03][x03][x03][x03][x03][x03][x03][x00][x00][x00][x00][x00][x00][x00][x00]"
 ├"[x00][x00][x00][x00][x03][x03][x03][x03][x03][x03][x03]"
-RCL 51
+RCL 51                    'draw row (y)
 24
 +
-RCL 52
-AGRAPH
+RCL 52                    'draw column (x)
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 RTN
-LBL 01
+LBL 01                    'sprite: selected piece
 "08[x18][x00][x00][x18][x18][x00][x00][x18][x18][x00][x00][x18][x18]"
 ├"[x00][x00][x18]80"
-RCL 51
-RCL 52
+RCL 51                    'draw row (y)
+RCL 52                    'draw column (x)
 3
 +
-AGRAPH
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 "33[x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][x00]"
 ├"[x00][x00][x00]33"
-RCL 51
+RCL 51                    'draw row (y)
 8
 +
-RCL 52
+RCL 52                    'draw column (x)
 3
 +
-AGRAPH
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 "3s`[x00][x00]``[x00][x00]``[x00][x00]``"
 ├"[x00][x00]`s3"
-RCL 51
+RCL 51                    'draw row (y)
 16
 +
-RCL 52
+RCL 52                    'draw column (x)
 3
 +
-AGRAPH
+AGRAPH                    'draw ALPHA as pixels at row Y, col X
 RTN
 END

@@ -13,5 +13,8 @@ text = open("chess3.txt").read()
 raw = encode(text)
 assert decode(raw) == [l for p in parse(text) for l in p], "encode/decode round trip failed"
 open("../CHESS.raw", "wb").write(raw)
-open("../CHESS_listing.txt", "w").write(text)
+subprocess.run([sys.executable, "annotate.py", "../CHESS_listing.txt"], check=True)
+listing = open("../CHESS_listing.txt").read()
+assert parse(listing) == parse(text), "commented listing differs from program"
+assert encode(listing) == raw, "commented listing encodes differently"
 print(f"CHESS.raw: {len(raw)} bytes")

@@ -391,11 +391,11 @@ def assign(prog):
             assert m.group(2) in mp, l
             l = f"{m.group(1)} {mp[m.group(2)]}"
         out.append(l)
-    return out, len(names)
+    return out, len(names), mp
 
 
-ENG, ne = assign(engine)
-UI, nu = assign(ui)
+ENG, ne, ENG_MAP = assign(engine)
+UI, nu, UI_MAP = assign(ui)
 ALL = ENG + UI
 
 if __name__ == "__main__":
