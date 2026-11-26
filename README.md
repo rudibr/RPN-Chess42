@@ -4,6 +4,12 @@ A chess program for the **SwissMicros DM42**, written in HP-42S RPN. It draws th
 
 ![Screenshot](screenshot.png)
 
+### Demo
+
+![A game in progress](demo.gif)
+
+*Recorded in the project's simulator at the DM42's native 400×240 resolution. White's moves are chosen by a second copy of the engine and entered with the cursor keys.*
+
 It needs a DM42 because of the GrMod graphics mode, so it won't run on an original HP-42S or on Free42.
 
 ## Requirements
@@ -112,6 +118,7 @@ python3 gplay2.py 1 2     # plays a game through the cursor keys at level 2
 - `gfx.py`: piece sprites and fonts.
 - `sim42.py`: simulator for the instruction subset used, plus the `.raw` encoder.
 - `decode42.py`: `.raw` decoder used for the round-trip check.
+- `make_gif.py`: records `demo.gif` (run `python3 gen3.py chess3.txt` first).
 
 ## License
 
