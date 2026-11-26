@@ -8,7 +8,7 @@ A chess program for the **SwissMicros DM42**, written in HP-42S RPN. It draws th
 
 ![A game in progress](demo.gif)
 
-*Recorded in the project's simulator at the DM42's native 400×240 resolution. White's moves are chosen by a second copy of the engine and entered with the cursor keys.*
+*Recorded in the project's simulator at the DM42's native 400×240 resolution, with the program playing Black at level 2. White, the "human", opens with the Queen's Gambit (1.d4 d5 2.c4); the program accepts with 2...dxc4, and from move 3 White's moves come from Stockfish. All moves are entered with the cursor keys. Game: 1.d4 d5 2.c4 dxc4 3.Nf3 f5 4.e3 b5 5.a4 c6 6.axb5 cxb5 7.b3 Be6 8.bxc4 bxc4 9.Ng5 Qd5 10.Nc3 Qd6 11.Nb5 Qb4+ 12.Bd2 Qxb5 13.Nxe6 Qd5 14.Nc7+ Kf7 15.Nxd5 e6 16.Nc7 c3 17.Bxc3 Bb4 18.Bxb4 a5 19.Qb3 a4 20.Qxe6#*
 
 It needs a DM42 because of the GrMod graphics mode, so it won't run on an original HP-42S or on Free42.
 
@@ -118,7 +118,7 @@ python3 gplay2.py 1 2     # plays a game through the cursor keys at level 2
 - `gfx.py`: piece sprites and fonts.
 - `sim42.py`: simulator for the instruction subset used, plus the `.raw` encoder.
 - `decode42.py`: `.raw` decoder used for the round-trip check.
-- `make_gif.py`: records `demo.gif` (run `python3 gen3.py chess3.txt` first).
+- `make_gif.py`: records `demo.gif` (run `python3 gen3.py chess3.txt` first; uses Stockfish for White if installed).
 
 ## License
 

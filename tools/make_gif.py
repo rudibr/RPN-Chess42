@@ -1,9 +1,12 @@
 #!/usr/bin/env python3
 """Record a game in the simulator as an animated GIF (400x240, native DM42 resolution).
-White's moves are chosen by a second copy of the engine and entered with the cursor keys."""
+White opens with the Queen's Gambit (1.d4 and 2.c4); after that White's moves come from
+Stockfish if it is installed (otherwise from a second copy of the program). All moves are
+entered with the cursor keys. Black's moves are the program's own choices."""
 import os, sys
 os.environ.setdefault('PRG', 'chess3.txt')
 import chess
+import chess.engine
 from PIL import Image
 from harness import load, svc, m2uci
 from sim42 import Calc
@@ -41,13 +44,27 @@ def goto(sq):
              ([UP] * (r - cr) if r > cr else [DOWN] * (cr - r)):
         press(k, 120)
 
+# White's later moves come from Stockfish if it is installed, otherwise from the program itself
+SF = None
+for path in ('/usr/games/stockfish', '/usr/bin/stockfish', 'stockfish'):
+    try:
+        SF = chess.engine.SimpleEngine.popen_uci(path); break
+    except Exception:
+        pass
 ui.xeq('CHESS'); snap(1500)
 helper.xeq('CHESS'); helper.regs[33] = D(2)
 board = chess.Board()
 nmoves = int(sys.argv[1]) if len(sys.argv) > 1 else 12
+# White's opening: Queen's Gambit (1.d4 and 2.c4); after that Stockfish plays White
+OPENING = ['d2d4', 'c2c4']
 for i in range(nmoves):
-    load(helper, board); svc(helper, 'ChSRCH')
-    u = m2uci(helper.regs[31])
+    u = OPENING[i] if i < len(OPENING) else None
+    if u is None or chess.Move.from_uci(u) not in board.legal_moves:
+        if SF:
+            u = SF.play(board, chess.engine.Limit(time=0.3)).move.uci()[:4]
+        else:
+            load(helper, board); svc(helper, 'ChSRCH')
+            u = m2uci(helper.regs[31])
     goto(u[:2]); press(ENTER, 400)
     goto(u[2:]); 
     press(ENTER, 1800)                 # engine reply shown
@@ -59,4 +76,6 @@ for i in range(nmoves):
     if board.is_game_over(): break
 durations[-1] = 4000
 frames[0].save('../demo.gif', save_all=True, append_images=frames[1:], duration=durations, loop=0, optimize=True)
-print(len(frames), 'frames', os.path.getsize('../demo.gif'), 'bytes', board.fen())
+print(len(frames), 'frames', os.path.getsize('../demo.gif'), 'bytes')
+print(chess.Board().variation_san(board.move_stack), board.result())
+if SF: SF.quit()
