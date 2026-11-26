@@ -1,0 +1,4218 @@
+LBL "CHESS"
+FS?C 06
+GTO 15
+SIZE 1224
+XEQ 16
+XEQ 19
+0
+STO 49
+STO 54
+1
+STO 53
+125
+STO 83
+SF 07
+GTO "CHCON"
+LBL 15
+RCL 38
+1
+X=Y?
+GTO 42
+R↓
+2
+X=Y?
+GTO 82
+R↓
+3
+X=Y?
+GTO 41
+R↓
+4
+X=Y?
+GTO E
+R↓
+5
+X=Y?
+GTO 24
+R↓
+6
+X=Y?
+GTO 43
+R↓
+7
+X=Y?
+GTO 40
+R↓
+8
+X=Y?
+GTO 00
+R↓
+RTN
+LBL 16
+1
+STO 40
++/-
+STO 41
+10
+STO 42
++/-
+STO 43
+9
+STO 44
++/-
+STO 45
+11
+STO 46
++/-
+STO 47
+0
+STO 48
+STO 94
+STO 99
+8
+STO 86
++/-
+STO 87
+12
+STO 88
++/-
+STO 89
+19
+STO 90
++/-
+STO 91
+21
+STO 92
++/-
+STO 93
+1
+STO 95
++/-
+STO 96
+10
+STO 97
++/-
+STO 98
+100
+STO 70
+300
+STO 71
+320
+STO 72
+500
+STO 73
+900
+STO 74
+0
+STO 75
+STO 76
+STO 79
+4
+STO 77
+2
+STO 78
+1
+STO 80
+4
++/-
+STO 81
+2
+STO 33
+1
+STO 00
+LBL 17
+1
+STO 01
+LBL 18
+RCL 01
+2
+×
+9
+-
+ABS
+RCL 00
+2
+×
+9
+-
+ABS
++
+2
+÷
+7
+X<>Y
+-
+RCL 00
+10
+×
+RCL 01
++
+990
++
+X<>Y
+STO IND ST Y
+1
+STO+ 01
+RCL 01
+9
+X≠Y?
+GTO 18
+1
+STO+ 00
+RCL 00
+9
+X≠Y?
+GTO 17
+RTN
+LBL 19
+100
+STO 03
+LBL 20
+0.5
+STO IND 03
+1
+STO+ 03
+RCL 03
+220
+X≠Y?
+GTO 20
+1
+STO 00
+LBL 21
+1
+STO 01
+LBL 22
+RCL 00
+10
+×
+RCL 01
++
+110
++
+STO 03
+0
+STO IND 03
+1
+STO+ 01
+RCL 01
+9
+X≠Y?
+GTO 22
+1
+STO+ 00
+RCL 00
+9
+X≠Y?
+GTO 21
+42356324
+STO 04
+8
+STO 01
+LBL 23
+RCL 04
+10
+MOD
+STO 02
+RCL 04
+10
+÷
+IP
+STO 04
+RCL 01
+120
++
+STO 03
+RCL 01
+100
+÷
+RCL 02
++
+STO IND 03
+RCL 01
+1080
++
+STO 13
+RCL 03
+STO IND 13
+RCL 01
+130
++
+STO 03
+RCL 01
+8
++
+100
+÷
+1
++
+STO IND 03
+RCL 01
+1088
++
+STO 13
+RCL 03
+STO IND 13
+RCL 01
+190
++
+STO 03
+RCL 01
+16
++
+100
+÷
+RCL 02
++
++/-
+STO IND 03
+RCL 01
+1096
++
+STO 13
+RCL 03
+STO IND 13
+RCL 01
+180
++
+STO 03
+RCL 01
+24
++
+100
+÷
+1
++
++/-
+STO IND 03
+RCL 01
+1104
++
+STO 13
+RCL 03
+STO IND 13
+1
+STO- 01
+RCL 01
+X≠0?
+GTO 23
+1
+STO 05
+0
+STO 06
+STO 07
+STO 31
+15
+STO 08
+125
+STO 09
+195
+STO 10
+RTN
+LBL 24
+0
+STO 11
+STO 31
+STO 36
+30000
+STO 15
++/-
+STO 14
+RCL 33
+STO 17
+LBL 25
+1
+STO+ 36
+RCL 11
+80
+×
+360
++
+STO 30
+RCL 17
+X>0?
+GTO 26
+SF 01
+RCL 06
+RCL 05
+×
+STO 16
+STO 35
+RCL 11
+RCL 33
+4
++
+X≤Y?
+GTO 34
+RCL 16
+RCL 15
+X≤Y?
+GTO 34
+RCL 14
+RCL 16
+X>Y?
+STO 14
+GTO 27
+LBL 26
+CF 01
+20000
++/-
+STO 16
+LBL 27
+XEQ 46
+FS? 02
+GTO 33
+RCL 30
+STO 18
+LBL 28
+RCL 18
+RCL 19
+X≠Y?
+GTO 29
+RCL 20
+STO 18
+LBL 29
+RCL 30
+80
++
+RCL 18
+X=Y?
+GTO 37
+RCL IND ST X
+STO 13
+RCL 17
+X>0?
+GTO 32
+RCL 13
+10000000
+÷
+IP
+69
++
+STO 39
+RCL IND 39
+RCL 06
+RCL 05
+×
++
+200
++
+RCL 14
+X<Y?
+GTO 30
+GTO 37
+LBL 30
+RCL 13
+1000000
+÷
+IP
+10
+MOD
+7
+X<>Y
+-
+69
++
+STO 39
+RCL IND 39
+RCL 13
+10000000
+÷
+IP
+69
++
+STO 39
+RCL IND 39
+50
++
+X<Y?
+GTO 31
+GTO 32
+LBL 31
+RCL 13
+1000
+MOD
+STO 63
+RCL 05
++/-
+STO 64
+XEQ 77
+FS? 03
+GTO 28
+LBL 32
+RCL 13
+1000000
+MOD
+STO 21
+1
+STO+ 18
+XEQ 82
+XEQ 38
+RCL 15
++/-
+RCL 14
++/-
+STO 15
+R↓
+STO 14
+1
+STO- 17
+STO+ 11
+GTO 25
+LBL 33
+10000
+STO 35
+LBL 34
+RCL 11
+X=0?
+RTN
+1
+STO- 11
+XEQ 39
+XEQ E
+RCL 35
++/-
+RCL 16
+X<Y?
+GTO 35
+GTO 36
+LBL 35
+X<>Y
+STO 16
+RCL 11
+X≠0?
+GTO 36
+RCL 21
+STO 31
+LBL 36
+RCL 14
+RCL 35
++/-
+X>Y?
+STO 14
+RCL 15
+RCL 14
+X<Y?
+GTO 28
+LBL 37
+RCL 16
+STO 35
+RCL 17
+X≤0?
+GTO 34
+RCL 16
+10000
++/-
+X<Y?
+GTO 34
+0
+STO 35
+RCL 11
+X=0?
+STO 31
+XEQ 40
+FC? 03
+GTO 34
+RCL 11
+9000
+-
+STO 35
+GTO 34
+LBL 38
+RCL 11
+17
+×
+220
++
+STO 12
+RCL 14
+STO IND 12
+1
+STO+ 12
+RCL 15
+STO IND 12
+1
+STO+ 12
+RCL 16
+STO IND 12
+1
+STO+ 12
+RCL 17
+STO IND 12
+1
+STO+ 12
+RCL 18
+STO IND 12
+1
+STO+ 12
+RCL 19
+STO IND 12
+1
+STO+ 12
+RCL 20
+STO IND 12
+1
+STO+ 12
+RCL 21
+STO IND 12
+1
+STO+ 12
+RCL 22
+STO IND 12
+1
+STO+ 12
+RCL 23
+STO IND 12
+1
+STO+ 12
+RCL 24
+STO IND 12
+1
+STO+ 12
+RCL 25
+STO IND 12
+1
+STO+ 12
+RCL 26
+STO IND 12
+1
+STO+ 12
+RCL 27
+STO IND 12
+1
+STO+ 12
+RCL 28
+STO IND 12
+1
+STO+ 12
+RCL 29
+STO IND 12
+1
+STO+ 12
+RCL 30
+STO IND 12
+1
+STO+ 12
+RTN
+LBL 39
+RCL 11
+17
+×
+220
++
+STO 12
+RCL IND 12
+STO 14
+1
+STO+ 12
+RCL IND 12
+STO 15
+1
+STO+ 12
+RCL IND 12
+STO 16
+1
+STO+ 12
+RCL IND 12
+STO 17
+1
+STO+ 12
+RCL IND 12
+STO 18
+1
+STO+ 12
+RCL IND 12
+STO 19
+1
+STO+ 12
+RCL IND 12
+STO 20
+1
+STO+ 12
+RCL IND 12
+STO 21
+1
+STO+ 12
+RCL IND 12
+STO 22
+1
+STO+ 12
+RCL IND 12
+STO 23
+1
+STO+ 12
+RCL IND 12
+STO 24
+1
+STO+ 12
+RCL IND 12
+STO 25
+1
+STO+ 12
+RCL IND 12
+STO 26
+1
+STO+ 12
+RCL IND 12
+STO 27
+1
+STO+ 12
+RCL IND 12
+STO 28
+1
+STO+ 12
+RCL IND 12
+STO 29
+1
+STO+ 12
+RCL IND 12
+STO 30
+1
+STO+ 12
+RTN
+LBL 40
+19
+RCL 05
+-
+2
+÷
+RCL IND ST X
+STO 63
+RCL 05
++/-
+STO 64
+GTO 77
+LBL 41
+RCL 05
+19
++
+2
+÷
+RCL IND ST X
+STO 63
+RCL 05
+STO 64
+GTO 77
+LBL 42
+0
+STO 11
+360
+STO 30
+CF 01
+GTO 46
+LBL 43
+CF 05
+XEQ 42
+RCL 30
+STO 18
+LBL 44
+RCL 18
+RCL 19
+X≠Y?
+GTO 45
+RCL 20
+STO 18
+LBL 45
+RCL 30
+80
++
+RCL 18
+X=Y?
+RTN
+RCL IND ST X
+1000000
+MOD
+STO 21
+1
+STO+ 18
+XEQ 82
+XEQ 41
+XEQ E
+FC? 03
+SF 05
+FS? 05
+RTN
+GTO 44
+LBL 46
+CF 02
+RCL 30
+STO 19
+80
++
+STO 20
+RCL 05
+8
+×
+9
+X<>Y
+-
+1080
++
+STO 61
+16
++
+STO 62
+LBL 47
+RCL 62
+RCL 61
+X=Y?
+RTN
+RCL IND ST X
+1
+STO+ 61
+R↓
+X=0?
+GTO 47
+STO 56
+RCL IND ST X
+ABS
+IP
+STO 82
+3
+X>Y?
+GTO 48
+X=Y?
+GTO 50
+R↓
+5
+X>Y?
+GTO 51
+X=Y?
+GTO 52
+XEQ 64
+GTO 53
+LBL 48
+R↓
+1
+X=Y?
+GTO 49
+XEQ 60
+GTO 53
+LBL 49
+XEQ 54
+GTO 53
+LBL 50
+XEQ 61
+GTO 53
+LBL 51
+XEQ 62
+GTO 53
+LBL 52
+XEQ 63
+LBL 53
+FS? 02
+RTN
+GTO 47
+LBL 54
+RCL 05
+10
+×
+STO 68
+RCL 56
++
+STO 59
+RCL IND 59
+X≠0?
+GTO 55
+XEQ 58
+RCL 56
+10
+÷
+IP
+RCL 05
+2.5
+×
+15.5
+X<>Y
+-
+X≠Y?
+GTO 55
+RCL 68
+STO+ 59
+RCL IND 59
+X=0?
+XEQ 65
+LBL 55
+RCL 56
+RCL 68
++
+1
+-
+XEQ 56
+FS? 02
+RTN
+RCL 56
+RCL 68
++
+1
++
+LBL 56
+STO 59
+RCL 07
+X=Y?
+GTO 57
+RCL IND 59
+RCL 05
+×
+X<0?
+GTO 69
+RTN
+LBL 57
+1
+STO 13
+GTO 66
+LBL 58
+RCL 59
+190
+X<Y?
+GTO 59
+RCL 59
+130
+X>Y?
+GTO 59
+GTO 65
+LBL 59
+5
+STO 13
+GTO 66
+LBL 60
+86
+STO 57
+GTO 73
+LBL 61
+44
+STO 57
+GTO 70
+LBL 62
+95
+STO 57
+GTO 70
+LBL 63
+40
+STO 57
+GTO 70
+LBL 64
+40
+STO 57
+XEQ 73
+FS? 02
+RTN
+FS? 01
+RTN
+RCL 08
+X=0?
+RTN
+GTO 75
+LBL 65
+FS? 01
+RTN
+RCL 20
+RCL 19
+X=Y?
+RTN
+1
+STO- 20
+RCL 56
+1000
+×
+RCL 59
++
+STO IND 20
+RTN
+LBL 66
+RCL 20
+RCL 19
+X=Y?
+RTN
+RCL 13
+10
+×
+7
++
+RCL 82
+-
+1000000
+×
+RCL 56
+1000
+×
++
+RCL 59
++
+STO 13
+RCL 19
+STO 39
+LBL 67
+RCL 39
+RCL 30
+X=Y?
+GTO 68
+RCL 39
+1
+-
+RCL IND ST X
+RCL 13
+X≤Y?
+GTO 68
+R↓
+STO IND 39
+1
+STO- 39
+GTO 67
+LBL 68
+RCL 13
+STO IND 39
+1
+STO+ 19
+RTN
+LBL 69
+ABS
+IP
+X=0?
+RTN
+6
+X=Y?
+SF 02
+FS? 02
+RTN
+R↓
+STO 13
+GTO 66
+LBL 70
+RCL IND 57
+X=0?
+RTN
+STO 60
+1
+STO+ 57
+RCL 56
+STO 59
+LBL 71
+RCL 60
+STO+ 59
+RCL IND 59
+X≠0?
+GTO 72
+FC? 01
+XEQ 65
+GTO 71
+LBL 72
+RCL 05
+×
+X>0?
+GTO 70
+XEQ 69
+FS? 02
+RTN
+GTO 70
+LBL 73
+RCL IND 57
+X=0?
+RTN
+1
+STO+ 57
+R↓
+RCL 56
++
+STO 59
+RCL IND 59
+X=0?
+GTO 74
+RCL 05
+×
+X>0?
+GTO 73
+XEQ 69
+FS? 02
+RTN
+GTO 73
+LBL 74
+FC? 01
+XEQ 65
+GTO 73
+LBL 75
+RCL 05
+1.5
+×
+2.5
+X<>Y
+-
+STO 39
+RCL 08
+X<>Y
+÷
+IP
+2
+MOD
+X=0?
+GTO 76
+RCL 56
+1
++
+RCL IND ST X
+X≠0?
+GTO 76
+RCL 56
+2
++
+RCL IND ST X
+X≠0?
+GTO 76
+RCL 05
++/-
+STO 64
+RCL 56
+STO 63
+XEQ 77
+FS? 03
+RTN
+RCL 56
+1
++
+STO 63
+XEQ 77
+FS? 03
+GTO 76
+RCL 56
+2
++
+STO 59
+XEQ 65
+LBL 76
+RCL 08
+RCL 39
+2
+×
+÷
+IP
+2
+MOD
+X=0?
+RTN
+RCL 56
+1
+-
+RCL IND ST X
+X≠0?
+RTN
+RCL 56
+2
+-
+RCL IND ST X
+X≠0?
+RTN
+RCL 56
+3
+-
+RCL IND ST X
+X≠0?
+RTN
+RCL 05
++/-
+STO 64
+RCL 56
+STO 63
+XEQ 77
+FS? 03
+RTN
+RCL 56
+1
+-
+STO 63
+XEQ 77
+FS? 03
+RTN
+RCL 56
+2
+-
+STO 59
+XEQ 65
+RTN
+LBL 77
+CF 03
+1
+STO 69
+RCL 64
+10
+×
+RCL 63
+X<>Y
+-
+STO 66
+1
+-
+XEQ 78
+RCL 66
+1
++
+XEQ 78
+FS? 03
+RTN
+2
+STO 69
+86
+STO 65
+94
+STO 67
+XEQ 79
+FS? 03
+RTN
+6
+STO 69
+40
+STO 65
+48
+STO 67
+XEQ 79
+FS? 03
+RTN
+4
+STO 69
+40
+STO 65
+44
+STO 67
+XEQ 80
+FS? 03
+RTN
+3
+STO 69
+44
+STO 65
+48
+STO 67
+GTO 80
+LBL 78
+RCL IND ST X
+RCL 64
+×
+IP
+RCL 69
+X=Y?
+SF 03
+RTN
+LBL 79
+RCL 67
+RCL 65
+X=Y?
+RTN
+RCL IND ST X
+RCL 63
++
+XEQ 78
+FS? 03
+RTN
+1
+STO+ 65
+GTO 79
+LBL 80
+RCL 67
+RCL 65
+X=Y?
+RTN
+RCL IND ST X
+STO 34
+RCL 63
+STO 66
+LBL 81
+RCL 34
+STO+ 66
+RCL IND 66
+X=0?
+GTO 81
+RCL 64
+×
+IP
+5
+X=Y?
+SF 03
+R↓
+RCL 69
+X=Y?
+SF 03
+FS? 03
+RTN
+1
+STO+ 65
+GTO 80
+LBL 82
+RCL 06
+STO 28
+RCL 07
+STO 26
+RCL 08
+STO 27
+0
+STO 29
+STO 07
+RCL 21
+1000
+÷
+IP
+STO 22
+RCL 21
+1000
+MOD
+STO 23
+RCL IND 22
+STO 24
+RCL IND 23
+STO 25
+RCL 24
+STO 00
+RCL 22
+STO 01
+XEQ c
+STO- 06
+RCL 25
+X=0?
+GTO 83
+STO 00
+RCL 23
+STO 01
+XEQ c
+STO- 06
+RCL 25
+XEQ 94
+STO 13
+0
+STO IND 13
+LBL 83
+RCL 24
+ABS
+IP
+1
+X≠Y?
+GTO 87
+RCL 23
+RCL 26
+X≠Y?
+GTO 84
+RCL 05
+10
+×
+RCL 23
+X<>Y
+-
+STO 39
+RCL IND 39
+STO 25
+STO 00
+RCL 39
+STO 01
+XEQ c
+STO- 06
+RCL 25
+XEQ 94
+STO 13
+0
+STO IND 13
+STO IND 39
+1
+STO 29
+LBL 84
+RCL 23
+RCL 22
+-
+ABS
+20
+X≠Y?
+GTO 85
+RCL 23
+RCL 22
++
+2
+÷
+STO 07
+LBL 85
+RCL 23
+190
+X<Y?
+GTO 86
+RCL 23
+130
+X>Y?
+GTO 86
+GTO 91
+LBL 86
+RCL 05
+4
+×
+RCL 24
++
+GTO 92
+LBL 87
+R↓
+6
+X≠Y?
+GTO 91
+19
+RCL 05
+-
+2
+÷
+STO 13
+RCL 23
+STO IND 13
+RCL 23
+RCL 22
+-
+2
+X=Y?
+GTO 88
++/-
+X=Y?
+GTO 89
+GTO 91
+LBL 88
+RCL 22
+3
++
+STO 39
+RCL 22
+1
++
+GTO 90
+LBL 89
+RCL 22
+4
+-
+STO 39
+RCL 22
+1
+-
+LBL 90
+STO 03
+RCL IND 39
+STO IND 03
+XEQ 94
+STO 13
+RCL 03
+STO IND 13
+0
+STO IND 39
+2
+STO 29
+LBL 91
+RCL 24
+LBL 92
+STO IND 23
+STO 00
+RCL 23
+STO 01
+XEQ c
+STO+ 06
+0
+STO IND 22
+RCL 24
+XEQ 94
+STO 13
+RCL 23
+STO IND 13
+RCL 08
+X=0?
+GTO 93
+RCL 22
+XEQ 95
+RCL 23
+XEQ 95
+LBL 93
+RCL 05
++/-
+STO 05
+RTN
+LBL 94
+ABS
+FP
+100
+×
+1080
++
+RTN
+LBL 95
+STO 04
+130
+X>Y?
+GTO 96
+RCL 04
+190
+X>Y?
+RTN
+LBL 96
+RCL 04
+121
+X=Y?
+GTO 97
+RCL 04
+125
+X=Y?
+GTO 98
+RCL 04
+128
+X=Y?
+GTO 99
+RCL 04
+191
+X=Y?
+GTO A
+RCL 04
+195
+X=Y?
+GTO B
+RCL 04
+198
+X=Y?
+GTO C
+RTN
+LBL 97
+2
+GTO D
+LBL 98
+1
+XEQ D
+2
+GTO D
+LBL 99
+1
+GTO D
+LBL A
+8
+GTO D
+LBL B
+4
+XEQ D
+8
+GTO D
+LBL C
+4
+LBL D
+STO 03
+RCL 08
+RCL 03
+÷
+IP
+2
+MOD
+X=0?
+RTN
+RCL 03
+STO- 08
+RTN
+LBL E
+RCL 05
++/-
+STO 05
+RCL 24
+STO IND 22
+XEQ 94
+STO 13
+RCL 22
+STO IND 13
+RCL 29
+1
+X=Y?
+GTO I
+RCL 25
+STO IND 23
+X=0?
+GTO F
+XEQ 94
+STO 13
+RCL 23
+STO IND 13
+LBL F
+RCL 29
+2
+X=Y?
+GTO J
+LBL G
+RCL 24
+ABS
+IP
+6
+X≠Y?
+GTO H
+19
+RCL 05
+-
+2
+÷
+STO 13
+RCL 22
+STO IND 13
+LBL H
+RCL 28
+STO 06
+RCL 26
+STO 07
+RCL 27
+STO 08
+RTN
+LBL I
+0
+STO IND 23
+RCL 05
+10
+×
+RCL 23
+X<>Y
+-
+STO 39
+RCL 25
+STO IND 39
+XEQ 94
+STO 13
+RCL 39
+STO IND 13
+GTO H
+LBL J
+RCL 23
+RCL 22
+X<Y?
+GTO a
+RCL 22
+1
+-
+STO 03
+RCL 22
+4
+-
+GTO b
+LBL a
+RCL 22
+1
++
+STO 03
+RCL 22
+3
++
+LBL b
+STO 39
+RCL IND 03
+STO IND 39
+XEQ 94
+STO 13
+RCL 39
+STO IND 13
+0
+STO IND 03
+GTO G
+LBL c
+RCL 01
+880
++
+RCL IND ST X
+STO 02
+RCL 00
+ABS
+IP
+STO 03
+1
+X=Y?
+GTO d
+RCL 03
+75
++
+STO 04
+RCL IND 04
+RCL 02
+×
+STO 02
+RCL 03
+69
++
+STO 04
+RCL IND 04
+RCL 02
++
+GTO e
+LBL d
+RCL 01
+10
+÷
+IP
+15.5
+-
+RCL 00
+SIGN
+×
+2.5
++
+STO 04
+RCL 02
+×
+RCL 04
+X↑2
+2
+×
++
+100
++
+LBL e
+RCL 00
+SIGN
+×
+RTN
+LBL 00
+0
+STO 06
+1081
+STO 12
+LBL 01
+RCL IND 12
+X=0?
+GTO 02
+STO 01
+RCL IND ST X
+STO 00
+XEQ c
+STO+ 06
+LBL 02
+1
+STO+ 12
+RCL 12
+1113
+X≠Y?
+GTO 01
+RTN
+END
+LBL "CHCON"
+FS?C 07
+XEQ 60
+LBL 15
+3
+STO "GrMod"
+XEQ 39
+LBL 16
+GETKEY
+STO 55
+13
+X=Y?
+GTO 22
+RCL 55
+20
+X=Y?
+GTO 17
+RCL 55
+30
+X=Y?
+GTO 18
+RCL 55
+24
+X=Y?
+GTO 19
+RCL 55
+26
+X=Y?
+GTO 20
+RCL 55
+17
+X=Y?
+GTO 31
+RCL 55
+34
+X=Y?
+GTO 33
+RCL 55
+21
+X=Y?
+GTO 30
+RCL 55
+33
+X=Y?
+GTO 32
+GTO 16
+LBL 17
+10
+GTO 21
+LBL 18
+10
++/-
+GTO 21
+LBL 19
+1
++/-
+GTO 21
+LBL 20
+1
+LBL 21
+RCL 83
++
+STO 39
+RCL IND 39
+0.5
+X=Y?
+GTO 16
+RCL 39
+STO 83
+GTO 15
+LBL 22
+RCL 49
+X≠0?
+GTO 24
+RCL IND 83
+RCL 05
+×
+1
+X>Y?
+GTO 23
+RCL 83
+STO 50
+1
+STO 49
+STO 53
+GTO 15
+LBL 23
+8
+STO 53
+GTO 15
+LBL 24
+RCL 83
+RCL 50
+X=Y?
+GTO 31
+0
+STO 49
+RCL 50
+1000
+×
+RCL 83
++
+STO 21
+SF 06
+1
+STO 38
+XEQ "CHESS"
+RCL 30
+STO 18
+LBL 25
+RCL 18
+RCL 19
+X≠Y?
+GTO 26
+RCL 20
+STO 18
+LBL 26
+RCL 30
+80
++
+RCL 18
+X=Y?
+GTO 28
+RCL IND ST X
+1000000
+MOD
+RCL 21
+X=Y?
+GTO 27
+1
+STO+ 18
+GTO 25
+LBL 27
+SF 06
+2
+STO 38
+XEQ "CHESS"
+SF 06
+3
+STO 38
+XEQ "CHESS"
+FC? 03
+GTO 29
+SF 06
+4
+STO 38
+XEQ "CHESS"
+LBL 28
+3
+STO 53
+GTO 15
+LBL 29
+RCL 21
+STO 54
+GTO 33
+LBL 30
+RCL 33
+3
+MOD
+1
++
+STO 33
+GTO 15
+LBL 31
+0
+STO 49
+GTO 15
+LBL 32
+CLLCD
+0
+STO "GrMod"
+"XEQ CHCON to"
+├"[LF]continue"
+AVIEW
+RTN
+LBL 33
+0
+STO 49
+2
+STO 53
+3
+STO "GrMod"
+XEQ 39
+SF 06
+5
+STO 38
+XEQ "CHESS"
+RCL 35
+STO 32
+RCL 31
+X=0?
+GTO 37
+STO 21
+STO 54
+SF 06
+2
+STO 38
+XEQ "CHESS"
+SF 06
+6
+STO 38
+XEQ "CHESS"
+SF 06
+7
+STO 38
+XEQ "CHESS"
+1
+STO 53
+FS? 03
+XEQ 34
+FC? 05
+XEQ 35
+GTO 15
+LBL 34
+4
+STO 53
+RTN
+LBL 35
+7
+STO 53
+FS? 03
+XEQ 36
+RTN
+LBL 36
+5
+STO 53
+RTN
+LBL 37
+SF 06
+7
+STO 38
+XEQ "CHESS"
+7
+STO 53
+FS? 03
+XEQ 38
+GTO 15
+LBL 38
+6
+STO 53
+RTN
+LBL 39
+CLLCD
+1
+STO 84
+LBL 40
+1
+STO 85
+LBL 41
+RCL 84
+10
+×
+RCL 85
++
+110
++
+STO 39
+XEQ 49
+RCL IND 39
+ABS
+IP
+RCL IND 39
+SIGN
+×
+6
++
+2
+×
+RCL 84
+RCL 85
++
+2
+MOD
+1
+X<>Y
+-
++
+STO 13
+12
+X≠Y?
+XEQ 61
+1
+STO+ 85
+RCL 85
+9
+X≠Y?
+GTO 41
+1
+STO+ 84
+RCL 84
+9
+X≠Y?
+GTO 40
+RCL 54
+X=0?
+GTO 42
+1000
+÷
+IP
+STO 39
+XEQ 49
+27
+STO 13
+XEQ 61
+RCL 54
+1000
+MOD
+STO 39
+XEQ 49
+27
+STO 13
+XEQ 61
+LBL 42
+RCL 83
+STO 39
+XEQ 49
+26
+STO 13
+XEQ 61
+RCL 49
+X=0?
+GTO 43
+RCL 50
+STO 39
+XEQ 49
+28
+STO 13
+XEQ 61
+LBL 43
+"[x01][x01][x01][x01][x01][x01][x01][x01][x01][x01][x01][x01][x01][x01][x01]"
+├"[x01][x01][x01][x01][x01][x01][x01][x01][x01][x01][x01][x01][x01][x01]"
+├"[x01][x01][x01][x01][x01][x01][x01][x01][x01][x01][x01][x01][x01]"
+15
+STO 52
+LBL 44
+15
+RCL 52
+AGRAPH
+224
+RCL 52
+AGRAPH
+42
+STO+ 52
+RCL 52
+225
+X>Y?
+GTO 44
+CLA
+├"[xFF]"
+16
+STO 51
+LBL 45
+RCL 51
+15
+AGRAPH
+RCL 51
+224
+AGRAPH
+8
+STO+ 51
+RCL 51
+224
+X>Y?
+GTO 45
+1
+STO 84
+LBL 46
+CLA
+RCL 84
+1150
++
+STO 39
+ARCL IND 39
+224
+RCL 84
+26
+×
+-
+9
++
+3
+AGRAPH
+CLA
+RCL 84
+1140
++
+STO 39
+ARCL IND 39
+228
+RCL 84
+26
+×
+1
+-
+AGRAPH
+1
+STO+ 84
+RCL 84
+9
+X≠Y?
+GTO 46
+"[x00][x00][xFF][xFF][x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][xC0]"
+├"[xC0]000000[xC0][xC0][x00][x00][xF0][xF0][x00]"
+├"[x00][x00][x00][x00][x00][xF0][xF0][x00][x00][xC0][xC0]00"
+14
+231
+AGRAPH
+"0000[xC0][xC0][x00][x00][x00][x00][x03][x03][xFF][xFF][x00]"
+├"[x00][x00][x00]"
+14
+273
+AGRAPH
+"[x00][x00]??00000000[x00][x00][x0F]"
+├"[x0F]333333[x03][x03][x00][x00][x03][x03][x0C]"
+├"[x0C]00[x0C][x0C][x03][x03][x00][x00][x0F][x0F]33"
+22
+231
+AGRAPH
+"3333[x03][x03][x00][x00][x00][x00]00??0"
+├"0[x00][x00]"
+22
+273
+AGRAPH
+14
+STO 51
+303
+STO 52
+RCL 33
+4
+×
+1188
++
+XEQ 51
+RCL 53
+1
+X=Y?
+XEQ 52
+RCL 53
+2
+X=Y?
+XEQ 53
+RCL 53
+3
+X=Y?
+XEQ 54
+RCL 53
+4
+X=Y?
+XEQ 55
+RCL 53
+5
+X=Y?
+XEQ 56
+RCL 53
+6
+X=Y?
+XEQ 57
+RCL 53
+7
+X=Y?
+XEQ 58
+RCL 53
+8
+X=Y?
+XEQ 59
+"[x00][x00][xFF][xFF][x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][x00]"
+├"[x00]000000[xC0][xC0][x00][x00][xC0][xC0]0"
+├"00000[x00][x00][x00][x00]00[xFF][xFF]"
+50
+231
+AGRAPH
+"00[x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][x0C][x0C][x00]"
+├"[x00][x00][x00]"
+50
+273
+AGRAPH
+"[x00][x00]??00000000[x00][x00][x0C]"
+├"[x0C]333333??[x00][x00]003"
+├"33333[x0C][x0C][x00][x00][x00][x00][x0F][x0F]"
+58
+231
+AGRAPH
+"0000[x0C][x0C][x00][x00][x00][x00][x00][x00][x0C][x0C][x00]"
+├"[x00][x00][x00]"
+58
+273
+AGRAPH
+RCL 54
+X=0?
+GTO 47
+50
+STO 51
+303
+STO 52
+RCL 54
+1000
+÷
+IP
+XEQ 50
+RCL 54
+1000
+MOD
+XEQ 50
+LBL 47
+"[x00][x00][xFF][xFF][x0C][x0C][xF0][xF0][x0C][x0C][xFF][xFF][x00][x00][xC0]"
+├"[xC0]000000[xC0][xC0][x00][x00][xF0][xF0][x00]"
+├"[x00][x00][x00][x00][x00][xF0][xF0][x00][x00][xC0][xC0]00"
+68
+231
+AGRAPH
+"0000[xC0][xC0][x00][x00][x00][x00][x00][x00][x0C][x0C][x00]"
+├"[x00][x00][x00]"
+68
+273
+AGRAPH
+"[x00][x00]??[x00][x00][x00][x00][x00][x00]??[x00][x00][x0F]"
+├"[x0F]000000[x0F][x0F][x00][x00][x03][x03][x0C]"
+├"[x0C]00[x0C][x0C][x03][x03][x00][x00][x0F][x0F]33"
+76
+231
+AGRAPH
+"3333[x03][x03][x00][x00][x00][x00][x00][x00][x0C][x0C][x00]"
+├"[x00][x00][x00]"
+76
+273
+AGRAPH
+68
+STO 51
+303
+STO 52
+RCL 49
+X=0?
+GTO 48
+RCL 50
+XEQ 50
+"[x00][x00][xC0][xC0][xC0][xC0][xC0][xC0][xC0][xC0][xC0][xC0]"
+RCL 51
+RCL 52
+AGRAPH
+"[x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][x00]"
+RCL 51
+8
++
+RCL 52
+AGRAPH
+12
+STO+ 52
+LBL 48
+RCL 83
+XEQ 50
+"[x00][x00]<<[xC3][xC3][xC3][xC3][xC3][xC3]<<[x00][x00][x00]"
+├"[x00][x00][x00][xC0][xC0]00[x0F][x0F][x00][x00][x0C][x0C][x03]"
+├"[x03][x03][x03][xC3][xC3]<<[x00][x00][x00][x00][x00][x00]"
+86
+231
+AGRAPH
+"[x00][x00][x00][x00][x00][x00][x00][x00][xF0][xF0][x00][x00][x00][x00][x00]"
+├"[x00][xF0][xF0][x00][x00][xF0][xF0]000000[xC0]"
+├"[xC0][x00][x00][x00][x00][x00][x00][xC0][xC0]00[x0F][x0F]"
+86
+273
+AGRAPH
+"[x00][x00][xC0][xC0]0000[xC0][xC0][xFF][xFF][x00][x00][xC0]"
+├"[xC0]000000[xC0][xC0][x00][x00][xF0][xF0][x00]"
+├"[x00][x00][x00][x00][x00][xF0][xF0][x00][x00][xF0][xF0][xC0][xC0]"
+86
+315
+AGRAPH
+"0000[xC0][xC0]"
+86
+357
+AGRAPH
+"[x00][x00][x0F][x0F]000000[x0F][x0F][x00][x00]<"
+├"<[x03][x03][x00][x00][x00][x00][x00][x00][x00][x00]00<"
+├"<330000[x00][x00][x00][x00][x00][x00]"
+94
+231
+AGRAPH
+"[x00][x00][x00][x00][x00][x00][x00][x00][x0F][x0F]0000[x0C]"
+├"[x0C]??[x00][x00]??[x03][x03][x03][x03][x03][x03][x00]"
+├"[x00][x00][x00]<<[x03][x03][x00][x00][x00][x00][x00][x00]"
+94
+273
+AGRAPH
+"[x00][x00][x0F][x0F]000000??[x00][x00][x0F]"
+├"[x0F]000000[x0F][x0F][x00][x00][x0F][x0F]0"
+├"0[x0F][x0F]00[x0F][x0F][x00][x00]??[x00][x00]"
+94
+315
+AGRAPH
+"[x00][x00][x00][x00]??"
+94
+357
+AGRAPH
+"[x00][x00][xC0][xC0]00[x0C][x0C][xFF][xFF][x00][x00][x00][x00][x00]"
+├"[x00][x00][x00][xC0][xC0]00[x0F][x0F][x00][x00][xF0][xF0][xCC]"
+├"[xCC][xC3][xC3][xC3][xC3][x00][x00][x00][x00][x00][x00][x00][x00]"
+104
+231
+AGRAPH
+"[x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][x03][x03][xFF][xFF][x00]"
+├"[x00][x00][x00][x00][x00][xC0][xC0]000000[xC0]"
+├"[xC0][x00][x00][xC0][xC0][xFC][xFC][xC3][xC3][x03][x03][x0C][x0C]"
+104
+273
+AGRAPH
+"[x00][x00]00[xFF][xFF]00[x00][x00][x00][x00][x00][x00][x00]"
+├"[x00][x00][x00][xC0][xC0]00[x0F][x0F][x00][x00][xF0][xF0][xC0]"
+├"[xC0]0000[xC0][xC0][x00][x00][x00][x00]00"
+104
+315
+AGRAPH
+CLA
+├"[xF3][xF3][x00][x00][x00][x00][x00][x00][xF0][xF0][x0C][x0C][x0C][x0C]"
+├"[x0C][x0C][xFC][xFC][x00][x00][xFF][xFF][xC0][xC0]0000"
+├"[xC0][xC0][x00][x00]00[xFF][xFF]00[x00][x00][x00][x00]"
+104
+357
+AGRAPH
+"[x00][x00][x03][x03][x03][x03][x03][x03]??[x03][x03][x00][x00]<"
+├"<[x03][x03][x00][x00][x00][x00][x00][x00][x00][x00][x0F][x0F]0"
+├"00000[x0F][x0F][x00][x00][x00][x00][x00][x00]"
+112
+231
+AGRAPH
+"[x00][x00][x00][x00][x00][x00][x00][x00][x00][x00]00??0"
+├"0[x00][x00][x00][x00][x0F][x0F]333333[x03]"
+├"[x03][x00][x00][x00][x00]??[x00][x00][x00][x00][x00][x00]"
+112
+273
+AGRAPH
+"[x00][x00][x00][x00][x0F][x0F]0000[x0C][x0C][x00][x00]<"
+├"<[x03][x03][x00][x00][x00][x00][x00][x00][x00][x00]??[x00]"
+├"[x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][x00]00"
+112
+315
+AGRAPH
+"??00[x00][x00][x00][x00][x00][x00]33333"
+├"3[x0F][x0F][x00][x00]??[x00][x00][x00][x00][x00][x00]?"
+├"?[x00][x00][x00][x00][x0F][x0F]0000[x0C][x0C]"
+112
+357
+AGRAPH
+"[x00][x00][xFF][xFF][xC3][xC3][xC3][xC3][xC3][xC3][x03][x03][x00][x00][xFF]"
+├"[xFF][x0C][x0C]00[xC0][xC0][xFF][xFF][x00][x00][x03][x03][x03]"
+├"[x03][xFF][xFF][x03][x03][x03][x03][x00][x00][xFF][xFF][xC3][xC3]"
+122
+231
+AGRAPH
+CLA
+├"[xC3][xC3][xC3][xC3][x03][x03][x00][x00][xFF][xFF][xC3][xC3][xC3][xC3]"
+├"[xC3][xC3]<<[x00][x00][x00][x00][x00][x00][x00][x00][x00][x00]"
+├"[x00][x00][x00][x00][xC0][xC0]000000[x00][x00]"
+122
+273
+AGRAPH
+"[x00][x00][xC0][xC0]000000[xC0][xC0][x00][x00][x00]"
+├"[x00][x03][x03][xFF][xFF][x00][x00][x00][x00][x00][x00][xC0][xC0]0"
+├"00000[xC0][xC0][x00][x00][xC0][xC0]00"
+122
+315
+AGRAPH
+"0000[x00][x00][x00][x00]00[xFF][xFF]00[x00]"
+├"[x00][x00][x00]"
+122
+357
+AGRAPH
+"[x00][x00]??00000000[x00][x00]?"
+├"?[x00][x00][x00][x00][x00][x00]??[x00][x00][x00][x00][x00]"
+├"[x00]??[x00][x00][x00][x00][x00][x00]??00"
+130
+231
+AGRAPH
+"000000[x00][x00]??[x00][x00][x03][x03][x0C]"
+├"[x0C]00[x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][x00]"
+├"[x00][x00][x00]00333333[x0C][x0C]"
+130
+273
+AGRAPH
+"[x00][x00][x0F][x0F]333333[x03][x03][x00][x00][x00]"
+├"[x00]00??00[x00][x00][x00][x00][x0F][x0F]3"
+├"33333[x03][x03][x00][x00][x0F][x0F]00"
+130
+315
+AGRAPH
+"0000[x0C][x0C][x00][x00][x00][x00][x0F][x0F]000"
+├"0[x0C][x0C]"
+130
+357
+AGRAPH
+"[x00][x00][xC0][xC0]00[x0C][x0C][x03][x03][x00][x00][x00][x00][xC0]"
+├"[xC0][xC0][xC0][xC0][xC0][xC0][xC0][xC0][xC0][x00][x00][x00][x00][x00]"
+├"[x00][x00][x00][x00][x00][x00][x00][x00][x00][xC0][xC0]00"
+140
+231
+AGRAPH
+"0000[x00][x00][x00][x00][x00][x00][x03][x03][xFF][xFF][x00]"
+├"[x00][x00][x00][x00][x00][xC0][xC0]000000[xC0]"
+├"[xC0][x00][x00][x00][x00]000000[xC0][xC0]"
+140
+273
+AGRAPH
+"[x00][x00][xF0][xF0][xC0][xC0]0000[xC0][xC0]"
+140
+315
+AGRAPH
+"[x00][x00][x00][x00][x03][x03][x0C][x0C]00[x00][x00][x00][x00][x00]"
+├"[x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][x00]"
+├"[x00][x00][x00][x00][x00][x00][x00][x00][x00][x0F][x0F]00"
+148
+231
+AGRAPH
+"0000[x0C][x0C][x00][x00][x00][x00]00??0"
+├"0[x00][x00][x00][x00][x0F][x0F]333333[x03]"
+├"[x03][x00][x00][x0C][x0C]333333??"
+148
+273
+AGRAPH
+"[x00][x00]??[x00][x00][x00][x00][x00][x00][x00][x00]"
+148
+315
+AGRAPH
+"[x00][x00][xFC][xFC][x03][x03][xC3][xC3]33[xFC][xFC][x00][x00][x00]"
+├"[x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][xF0][xF0]0"
+├"00000[xC0][xC0][x00][x00][x00][x00][x03][x03]"
+158
+231
+AGRAPH
+CLA
+├"[xFF][xFF][x00][x00][x00][x00][x00][x00][x00][x00]0000"
+├"00[xC0][xC0][x00][x00][xF0][xF0][x00][x00][x00][x00][x00][x00]"
+├"[xF0][xF0][x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][x00]"
+158
+273
+AGRAPH
+"[x00][x00][xC0][xC0][xFC][xFC][xC3][xC3][x03][x03][x0C][x0C][x00][x00][xC0]"
+├"[xC0]000000[xC0][xC0][x00][x00][xF0][xF0][xC0]"
+├"[xC0]0000[xC0][xC0][x00][x00][x00][x00][x00][x00]"
+158
+315
+AGRAPH
+"[x00][x00][x00][x00][x00][x00][x00][x00][xF0][xF0]00[xC0][xC0]0"
+├"0[xC0][xC0][x00][x00][xC0][xC0]000000[xC0]"
+├"[xC0]"
+158
+357
+AGRAPH
+"[x00][x00][x0F][x0F]330000[x0F][x0F][x00][x00][x00]"
+├"[x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][x00]??[x03]"
+├"[x03][x03][x03][x03][x03][x00][x00][x00][x00][x00][x00]00"
+166
+231
+AGRAPH
+"??00[x00][x00][x00][x00][x0C][x0C]33333"
+├"3??[x00][x00][x00][x00]333333[x0F]"
+├"[x0F][x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][x00]"
+166
+273
+AGRAPH
+"[x00][x00][x00][x00]??[x00][x00][x00][x00][x00][x00][x00][x00][x0F]"
+├"[x0F]000000[x0F][x0F][x00][x00]??[x00]"
+├"[x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][x00]"
+166
+315
+AGRAPH
+"[x00][x00][x00][x00][x00][x00][x00][x00]??[x00][x00][x03][x03][x00]"
+├"[x00]??[x00][x00][x0F][x0F]333333[x03]"
+├"[x03]"
+166
+357
+AGRAPH
+"[x00][x00]<<[xC3][xC3][xC3][xC3][xC3][xC3][xFC][xFC][x00][x00][x00]"
+├"[x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][x03]"
+├"[x03][xFF][xFF][x00][x00][x00][x00][x00][x00][xC0][xC0]00"
+176
+231
+AGRAPH
+"0000[xC0][xC0][x00][x00][xF0][xF0][x00][x00][x00][x00][x00]"
+├"[x00][xF0][xF0][x00][x00][xC0][xC0]000000[xC0]"
+├"[xC0][x00][x00][x00][x00][x03][x03][xFF][xFF][x00][x00][x00][x00]"
+176
+273
+AGRAPH
+"[x00][x00][x00][x00]0000[x0C][x0C][x03][x03][x00][x00][x00]"
+├"[x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][x00]0"
+├"0??00[x00][x00][x00][x00][x0F][x0F]33"
+184
+231
+AGRAPH
+"3333[x03][x03][x00][x00][x03][x03][x0C][x0C]00[x0C]"
+├"[x0C][x03][x03][x00][x00][x0F][x0F]333333[x03]"
+├"[x03][x00][x00][x00][x00]00??00[x00][x00]"
+184
+273
+AGRAPH
+"[x00][x00][xFF][xFF][xC3][xC3][xC3][xC3][xC3][xC3][x03][x03][x00][x00][x0F]"
+├"[x0F]00[xC0][xC0]00[x0F][x0F][x00][x00][x00][x00][x03]"
+├"[x03][xFF][xFF][x03][x03][x00][x00][x00][x00][x03][x03][x03][x03]"
+194
+231
+AGRAPH
+CLA
+├"[xFF][xFF][x03][x03][x03][x03][x00][x00][x00][x00][x00][x00][x00][x00]"
+├"[x00][x00][x00][x00][x00][x00][xC0][xC0]000000"
+├"[xF0][xF0][x00][x00][xF0][xF0][x00][x00][x00][x00][x00][x00][xF0][xF0]"
+194
+273
+AGRAPH
+"[x00][x00][x00][x00]00[xF3][xF3][x00][x00][x00][x00][x00][x00]0"
+├"0[xFF][xFF]00[x00][x00][x00][x00]"
+194
+315
+AGRAPH
+"[x00][x00]??00000000[x00][x00]<"
+├"<[x03][x03][x00][x00][x03][x03]<<[x00][x00][x00][x00]0"
+├"0??00[x00][x00][x00][x00][x00][x00][x00][x00]"
+202
+231
+AGRAPH
+"??[x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][x00]"
+├"[x00][x00][x00][x00][x00][x00][x00][x03][x03][x03][x03][x03][x03]?"
+├"?[x00][x00][x0F][x0F]0000[x0C][x0C]??"
+202
+273
+AGRAPH
+"[x00][x00][x00][x00]00??00[x00][x00][x00][x00][x00]"
+├"[x00][x0F][x0F]0000[x0C][x0C]"
+202
+315
+AGRAPH
+"[x00][x00][x0F][x0F]00[xC0][xC0]00[x0F][x0F][x00][x00][xFF]"
+├"[xFF][xC3][xC3][xC3][xC3][xC3][xC3][x03][x03][x00][x00][xFC][xFC][x03]"
+├"[x03][x03][x03][x03][x03][xFC][xFC][x00][x00][x00][x00][x00][x00]"
+212
+231
+AGRAPH
+"[x00][x00][x00][x00][x00][x00][x00][x00][xFC][xFC][x03][x03][x03][x03][x03]"
+├"[x03][x0C][x0C][x00][x00][xFF][xFF][xC0][xC0][xC0][xC0][xC0][xC0][xFF]"
+├"[xFF][x00][x00][xFF][xFF][xC3][xC3][xC3][xC3][xC3][xC3][x03][x03]"
+212
+273
+AGRAPH
+"[x00][x00]<<[xC3][xC3][xC3][xC3][xC3][xC3][x03][x03][x00][x00]<"
+├"<[xC3][xC3][xC3][xC3][xC3][xC3][x03][x03][x00][x00][x00][x00][x00]"
+├"[x00][x00][x00][x00][x00][x00][x00][x00][x00][xF0][xF0][xC0][xC0]"
+212
+315
+AGRAPH
+"0000[xC0][xC0][x00][x00][xC0][xC0]00000"
+├"0[xC0][xC0][x00][x00][xF0][xF0][x00][x00][x00][x00][x00][x00][xF0]"
+├"[xF0]"
+212
+357
+AGRAPH
+"[x00][x00]<<[x03][x03][x00][x00][x03][x03]<<[x00][x00]?"
+├"?00000000[x00][x00][x0F][x0F]0"
+├"033[x0C][x0C]33[x00][x00][x00][x00][x00][x00]"
+220
+231
+AGRAPH
+"[x00][x00][x00][x00][x00][x00][x00][x00][x0F][x0F]00000"
+├"0[x0C][x0C][x00][x00]??[x00][x00][x00][x00][x00][x00]?"
+├"?[x00][x00]??00000000"
+220
+273
+AGRAPH
+"[x00][x00]00000000[x0F][x0F][x00][x00]0"
+├"0000000[x0F][x0F][x00][x00][x00][x00][x00]"
+├"[x00][x00][x00][x00][x00][x00][x00][x00][x00]??[x00][x00]"
+220
+315
+AGRAPH
+"[x00][x00][x00][x00]??[x00][x00][x0F][x0F]33333"
+├"3[x03][x03][x00][x00][x0F][x0F]00[x0F][x0F]00[x0F]"
+├"[x0F]"
+220
+357
+AGRAPH
+RTN
+LBL 49
+RCL 39
+10
+÷
+IP
+11
+-
+26
+×
+224
+X<>Y
+-
+STO 51
+RCL 39
+10
+MOD
+26
+×
+10
+-
+STO 52
+RTN
+LBL 50
+STO 04
+10
+MOD
+4
+×
+1156
++
+XEQ 51
+RCL 04
+10
+÷
+IP
+4
+×
+1144
++
+LBL 51
+STO 03
+CLA
+ARCL IND 03
+1
+STO+ 03
+ARCL IND 03
+RCL 51
+RCL 52
+AGRAPH
+1
+STO+ 03
+CLA
+ARCL IND 03
+1
+STO+ 03
+ARCL IND 03
+RCL 51
+8
++
+RCL 52
+AGRAPH
+12
+STO+ 52
+RTN
+LBL 52
+"[x00][x00][x0F][x0F]00[xC0][xC0]00[x0F][x0F][x00][x00][xC0]"
+├"[xC0]000000[xC0][xC0][x00][x00][xF0][xF0][x00]"
+├"[x00][x00][x00][x00][x00][xF0][xF0][x00][x00][xF0][xF0][xC0][xC0]"
+32
+231
+AGRAPH
+"0000[xC0][xC0][x00][x00][x00][x00][x00][x00][x00][x00][x00]"
+├"[x00][x00][x00][x00][x00][xF0][xF0]00[xC0][xC0]00[xC0]"
+├"[xC0][x00][x00][xC0][xC0]000000[xC0][xC0]"
+32
+273
+AGRAPH
+"[x00][x00][xF0][xF0][x00][x00][x00][x00][x00][x00][xF0][xF0][x00][x00][xC0]"
+├"[xC0]000000[xC0][xC0]"
+32
+315
+AGRAPH
+"[x00][x00][x00][x00][x00][x00]??[x00][x00][x00][x00][x00][x00][x0F]"
+├"[x0F]000000[x0F][x0F][x00][x00][x0F][x0F]0"
+├"000[x0C][x0C]??[x00][x00]??[x00][x00]"
+40
+231
+AGRAPH
+"[x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][x00]"
+├"[x00][x00][x00][x00][x00]??[x00][x00][x03][x03][x00][x00]?"
+├"?[x00][x00][x0F][x0F]000000[x0F][x0F]"
+40
+273
+AGRAPH
+"[x00][x00][x03][x03][x0C][x0C]00[x0C][x0C][x03][x03][x00][x00][x0F]"
+├"[x0F]333333[x03][x03]"
+40
+315
+AGRAPH
+RTN
+LBL 53
+"[x00][x00][x03][x03][x03][x03][xFF][xFF][x03][x03][x03][x03][x00][x00][xFF]"
+├"[xFF][xC0][xC0]0000[xC0][xC0][x00][x00][x00][x00]0"
+├"0[xF3][xF3][x00][x00][x00][x00][x00][x00][xF0][xF0][xC0][xC0]"
+32
+231
+AGRAPH
+"0000[xC0][xC0][x00][x00][xFF][xFF][x00][x00][xC0][xC0]0"
+├"0[x00][x00][x00][x00][x00][x00]00[xF3][xF3][x00][x00][x00]"
+├"[x00][x00][x00][xF0][xF0][xC0][xC0]0000[xC0][xC0]"
+32
+273
+AGRAPH
+"[x00][x00][xF0][xF0][x0C][x0C][x0C][x0C][x0C][x0C][xFC][xFC][x00][x00][x00]"
+├"[x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][x00]"
+├"[x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][x00]"
+32
+315
+AGRAPH
+"[x00][x00][x00][x00][x00][x00]"
+32
+357
+AGRAPH
+"[x00][x00][x00][x00][x00][x00]??[x00][x00][x00][x00][x00][x00]?"
+├"?[x00][x00][x00][x00][x00][x00]??[x00][x00][x00][x00]0"
+├"0??00[x00][x00][x00][x00]??[x00][x00]"
+40
+231
+AGRAPH
+"[x00][x00][x00][x00]??[x00][x00]??[x03][x03][x0C][x0C]0"
+├"0[x00][x00][x00][x00][x00][x00]00??00[x00]"
+├"[x00][x00][x00]??[x00][x00][x00][x00][x00][x00]??"
+40
+273
+AGRAPH
+"[x00][x00][x00][x00]333333[x0F][x0F][x00][x00][x00]"
+├"[x00][x00][x00]00[x00][x00][x00][x00][x00][x00][x00][x00][x00]"
+├"[x00]00[x00][x00][x00][x00][x00][x00][x00][x00][x00][x00]"
+40
+315
+AGRAPH
+"00[x00][x00][x00][x00]"
+40
+357
+AGRAPH
+RTN
+LBL 54
+"[x00][x00][x00][x00][x03][x03][xFF][xFF][x03][x03][x00][x00][x00][x00][x00]"
+├"[x00][x03][x03][xFF][xFF][x00][x00][x00][x00][x00][x00][x00][x00][x03]"
+├"[x03][xFF][xFF][x00][x00][x00][x00][x00][x00][xC0][xC0]00"
+32
+231
+AGRAPH
+"0000[xC0][xC0][x00][x00][xF0][xF0][x0C][x0C][x0C][x0C][x0C]"
+├"[x0C][xFC][xFC][x00][x00][x00][x00]000000[xC0]"
+├"[xC0][x00][x00][x00][x00][x03][x03][xFF][xFF][x00][x00][x00][x00]"
+32
+273
+AGRAPH
+"[x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][xF0]"
+├"[xF0]00[xC0][xC0]00[xC0][xC0][x00][x00][xC0][xC0]0"
+├"00000[xC0][xC0][x00][x00][xF0][xF0][x00][x00]"
+32
+315
+AGRAPH
+"[x00][x00][x00][x00][xF0][xF0][x00][x00][xC0][xC0]00000"
+├"0[xC0][xC0]"
+32
+357
+AGRAPH
+"[x00][x00][x00][x00]00??00[x00][x00][x00][x00][x00]"
+├"[x00]00??00[x00][x00][x00][x00][x00][x00]0"
+├"0??00[x00][x00][x00][x00][x0F][x0F]33"
+40
+231
+AGRAPH
+"3333[x03][x03][x00][x00][x00][x00]33333"
+├"3[x0F][x0F][x00][x00][x0C][x0C]333333?"
+├"?[x00][x00][x00][x00]00??00[x00][x00]"
+40
+273
+AGRAPH
+"[x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][x00]?"
+├"?[x00][x00][x03][x03][x00][x00]??[x00][x00][x0F][x0F]0"
+├"00000[x0F][x0F][x00][x00][x03][x03][x0C][x0C]"
+40
+315
+AGRAPH
+"00[x0C][x0C][x03][x03][x00][x00][x0F][x0F]33333"
+├"3[x03][x03]"
+40
+357
+AGRAPH
+RTN
+LBL 55
+"[x00][x00][xFC][xFC][x03][x03][x03][x03][x03][x03][x0C][x0C][x00][x00][xFF]"
+├"[xFF][xC0][xC0]0000[xC0][xC0][x00][x00][xC0][xC0]0"
+├"00000[xC0][xC0][x00][x00][xC0][xC0]00"
+32
+231
+AGRAPH
+"0000[x00][x00][x00][x00][xFF][xFF][x00][x00][xC0][xC0]0"
+├"0[x00][x00][x00][x00][x00][x00][x00][x00][xFF][xFF][x00][x00][x00]"
+├"[x00]"
+32
+273
+AGRAPH
+"[x00][x00][x0F][x0F]000000[x0C][x0C][x00][x00]?"
+├"?[x00][x00][x00][x00][x00][x00]??[x00][x00][x0F][x0F]3"
+├"33333[x03][x03][x00][x00][x0F][x0F]00"
+40
+231
+AGRAPH
+"0000[x0C][x0C][x00][x00]??[x03][x03][x0C][x0C]0"
+├"0[x00][x00][x00][x00][x00][x00][x00][x00]33[x00][x00][x00]"
+├"[x00]"
+40
+273
+AGRAPH
+RTN
+LBL 56
+"[x00][x00][xFF][xFF][x0C][x0C][xF0][xF0][x0C][x0C][xFF][xFF][x00][x00][x00]"
+├"[x00]000000[xC0][xC0][x00][x00]00[xFF]"
+├"[xFF]00[x00][x00][x00][x00][x00][x00][xC0][xC0]00"
+32
+231
+AGRAPH
+"0000[xC0][xC0][x00][x00][x00][x00][x00][x00][x00][x00][x00]"
+├"[x00][x00][x00][x00][x00][xC0][xC0][xC0][xC0][xC0][xC0][xC0][xC0][xC0]"
+├"[xC0][x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][x00]"
+32
+273
+AGRAPH
+"[x00][x00][x00][x00][x03][x03][xFF][xFF][x03][x03][x00][x00][x00][x00][x00]"
+├"[x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][xF0][xF0][x00]"
+├"[x00][x00][x00][x00][x00][xF0][xF0][x00][x00][x00][x00]00"
+32
+315
+AGRAPH
+CLA
+├"[xF3][xF3][x00][x00][x00][x00][x00][x00][xF0][xF0][xC0][xC0]00"
+├"00[xC0][xC0]"
+32
+357
+AGRAPH
+"[x00][x00]??[x00][x00][x00][x00][x00][x00]??[x00][x00][x0C]"
+├"[x0C]333333??[x00][x00][x00][x00][x0F]"
+├"[x0F]0000[x0C][x0C][x00][x00][x0F][x0F]33"
+40
+231
+AGRAPH
+"3333[x03][x03][x00][x00][x00][x00][x00][x00][x00][x00][x00]"
+├"[x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][x00]"
+├"[x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][x00]"
+40
+273
+AGRAPH
+"[x00][x00][x00][x00]00??00[x00][x00][x00][x00][x00]"
+├"[x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][x0F][x0F]0"
+├"0[x0F][x0F]00[x0F][x0F][x00][x00][x00][x00]00"
+40
+315
+AGRAPH
+"??00[x00][x00][x00][x00]??[x00][x00][x00][x00][x00]"
+├"[x00]??"
+40
+357
+AGRAPH
+RTN
+LBL 57
+"[x00][x00][xFF][xFF][x0C][x0C][xF0][xF0][x0C][x0C][xFF][xFF][x00][x00][x00]"
+├"[x00]000000[xC0][xC0][x00][x00]00[xFF]"
+├"[xFF]00[x00][x00][x00][x00][x00][x00][xC0][xC0]00"
+32
+231
+AGRAPH
+"0000[xC0][xC0][x00][x00][x00][x00][x00][x00][x00][x00][x00]"
+├"[x00][x00][x00][x00][x00][xC0][xC0][xC0][xC0][xC0][xC0][xC0][xC0][xC0]"
+├"[xC0][x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][x00]"
+32
+273
+AGRAPH
+"[x00][x00][xF0][xF0][x00][x00][x00][x00][x00][x00][xF0][xF0][x00][x00][xC0]"
+├"[xC0]000000[xC0][xC0][x00][x00][xF0][xF0][x00]"
+├"[x00][x00][x00][x00][x00][xF0][xF0][x00][x00][x00][x00][x00][x00]"
+32
+315
+AGRAPH
+"[x00][x00][x00][x00][x00][x00][x00][x00][xF0][xF0][x00][x00][x00][x00][x00]"
+├"[x00][xF0][xF0][x00][x00][x00][x00]00[xF3][xF3][x00][x00][x00]"
+├"[x00][x00][x00][xF0][xF0][xC0][xC0]0000[xC0][xC0]"
+32
+357
+AGRAPH
+"[x00][x00]??[x00][x00][x00][x00][x00][x00]??[x00][x00][x0C]"
+├"[x0C]333333??[x00][x00][x00][x00][x0F]"
+├"[x0F]0000[x0C][x0C][x00][x00][x0F][x0F]33"
+40
+231
+AGRAPH
+"3333[x03][x03][x00][x00][x00][x00][x00][x00][x00][x00][x00]"
+├"[x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][x00]"
+├"[x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][x00]"
+40
+273
+AGRAPH
+"[x00][x00][x00][x00]333333[x0F][x0F][x00][x00][x0F]"
+├"[x0F]000000[x0F][x0F][x00][x00][x0F][x0F]0"
+├"000[x0C][x0C]??[x00][x00][x00][x00][x00][x00]"
+40
+315
+AGRAPH
+"[x00][x00][x00][x00][x00][x00][x00][x00][x0F][x0F]00[x0F][x0F]0"
+├"0[x0F][x0F][x00][x00][x00][x00]00??00[x00]"
+├"[x00][x00][x00]??[x00][x00][x00][x00][x00][x00]??"
+40
+357
+AGRAPH
+RTN
+LBL 58
+"[x00][x00]<<[xC3][xC3][xC3][xC3][xC3][xC3][x03][x03][x00][x00]0"
+├"0[xFF][xFF]00[x00][x00][x00][x00][x00][x00][x00][x00]0"
+├"00000[xC0][xC0][x00][x00][x00][x00][x03][x03]"
+32
+231
+AGRAPH
+CLA
+├"[xFF][xFF][x00][x00][x00][x00][x00][x00][xC0][xC0]0000"
+├"00[xC0][xC0][x00][x00][xF0][xF0]00[xC0][xC0]00"
+├"[xC0][xC0][x00][x00][x00][x00]000000[xC0][xC0]"
+32
+273
+AGRAPH
+"[x00][x00]00[xFF][xFF]00[x00][x00][x00][x00][x00][x00][xC0]"
+├"[xC0]000000[xC0][xC0]"
+32
+315
+AGRAPH
+"[x00][x00]00000000[x0F][x0F][x00][x00][x00]"
+├"[x00][x0F][x0F]0000[x0C][x0C][x00][x00][x0C][x0C]3"
+├"33333??[x00][x00][x00][x00]00"
+40
+231
+AGRAPH
+"??00[x00][x00][x00][x00][x0F][x0F]33333"
+├"3[x03][x03][x00][x00]??[x00][x00][x03][x03][x00][x00]?"
+├"?[x00][x00][x0C][x0C]333333??"
+40
+273
+AGRAPH
+"[x00][x00][x00][x00][x0F][x0F]0000[x0C][x0C][x00][x00][x0F]"
+├"[x0F]333333[x03][x03]"
+40
+315
+AGRAPH
+RTN
+LBL 59
+"[x00][x00][xFF][xFF][xC3][xC3][xC3][xC3][xC3][xC3]<<[x00][x00][x00]"
+├"[x00]00[xF3][xF3][x00][x00][x00][x00][x00][x00][xC0][xC0]0"
+├"00000[x00][x00][x00][x00][xFF][xFF][x00][x00]"
+32
+231
+AGRAPH
+CLA
+├"[xC0][xC0]00[x00][x00][x00][x00][x00][x00][x00][x00][x00][x00]"
+├"[x00][x00][x00][x00][x00][x00][xC0][xC0]000000"
+├"[xC0][xC0][x00][x00][xF0][xF0][x00][x00][x00][x00][x00][x00][xF0][xF0]"
+32
+273
+AGRAPH
+"[x00][x00][xF0][xF0][xC0][xC0]0000[xC0][xC0][x00][x00][x00]"
+├"[x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][xF0][xF0]0"
+├"00000[xC0][xC0][x00][x00][x00][x00]00"
+32
+315
+AGRAPH
+CLA
+├"[xF3][xF3][x00][x00][x00][x00][x00][x00][xC0][xC0]0000"
+├"00[xC0][xC0][x00][x00][xC0][xC0]000000"
+├"[x00][x00][x00][x00][xC0][xC0]000000[xC0][xC0]"
+32
+357
+AGRAPH
+"[x00][x00]??[x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][x00]"
+├"[x00]00??00[x00][x00][x00][x00][x0F][x0F]0"
+├"00000[x0C][x0C][x00][x00]??[x03][x03]"
+40
+231
+AGRAPH
+"[x0C][x0C]00[x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][x00]"
+├"[x00][x00][x00][x00][x00][x0F][x0F]000000[x0F]"
+├"[x0F][x00][x00][x0F][x0F]00[x0F][x0F]00[x0F][x0F]"
+40
+273
+AGRAPH
+"[x00][x00]??[x00][x00][x00][x00][x00][x00]??[x00][x00][x00]"
+├"[x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][x00]??[x03]"
+├"[x03][x03][x03][x03][x03][x00][x00][x00][x00][x00][x00]00"
+40
+315
+AGRAPH
+"??00[x00][x00][x00][x00][x0F][x0F]33333"
+├"3[x03][x03][x00][x00][x0F][x0F]000000[x0C]"
+├"[x0C][x00][x00][x0F][x0F]333333[x03][x03]"
+40
+357
+AGRAPH
+RTN
+LBL 60
+1141
+STO 03
+"[x00] TTTx"
+ASTO IND 03
+1
+STO+ 03
+"[x00][x7F]HDD8"
+ASTO IND 03
+1
+STO+ 03
+"[x00]8DDD "
+ASTO IND 03
+1
+STO+ 03
+"[x00]8DDH[x7F]"
+ASTO IND 03
+1
+STO+ 03
+"[x00]8TTT[x18]"
+ASTO IND 03
+1
+STO+ 03
+"[x00][x08]~[x09][x01][x02]"
+ASTO IND 03
+1
+STO+ 03
+"[x00][x0C]RRR>"
+ASTO IND 03
+1
+STO+ 03
+"[x00][x7F][x08][x04][x04]x"
+ASTO IND 03
+1
+STO+ 03
+1151
+STO 03
+"[x00][x00]B[x7F]@[x00]"
+ASTO IND 03
+1
+STO+ 03
+"[x00]BaQIF"
+ASTO IND 03
+1
+STO+ 03
+"[x00]AIII6"
+ASTO IND 03
+1
+STO+ 03
+"[x00][x18][x14][x12][x7F][x10]"
+ASTO IND 03
+1
+STO+ 03
+"[x00]'EEE9"
+ASTO IND 03
+1
+STO+ 03
+"[x00]<JII0"
+ASTO IND 03
+1
+STO+ 03
+"[x00][x01]q[x09][x05][x03]"
+ASTO IND 03
+1
+STO+ 03
+"[x00]6III6"
+ASTO IND 03
+1
+STO+ 03
+1160
+STO 03
+"[x00][x00][x00][x00]00"
+ASTO IND 03
+1
+STO+ 03
+"0000[xC0][xC0]"
+ASTO IND 03
+1
+STO+ 03
+"[x00][x00][x0C][x0C]33"
+ASTO IND 03
+1
+STO+ 03
+"3333??"
+ASTO IND 03
+1
+STO+ 03
+"[x00][x00][xFF][xFF][xC0][xC0]"
+ASTO IND 03
+1
+STO+ 03
+"0000[xC0][xC0]"
+ASTO IND 03
+1
+STO+ 03
+"[x00][x00]??00"
+ASTO IND 03
+1
+STO+ 03
+"0000[x0F][x0F]"
+ASTO IND 03
+1
+STO+ 03
+"[x00][x00][xC0][xC0]00"
+ASTO IND 03
+1
+STO+ 03
+"0000[x00][x00]"
+ASTO IND 03
+1
+STO+ 03
+"[x00][x00][x0F][x0F]00"
+ASTO IND 03
+1
+STO+ 03
+"0000[x0C][x0C]"
+ASTO IND 03
+1
+STO+ 03
+"[x00][x00][xC0][xC0]00"
+ASTO IND 03
+1
+STO+ 03
+"00[xC0][xC0][xFF][xFF]"
+ASTO IND 03
+1
+STO+ 03
+"[x00][x00][x0F][x0F]00"
+ASTO IND 03
+1
+STO+ 03
+"0000??"
+ASTO IND 03
+1
+STO+ 03
+"[x00][x00][xC0][xC0]00"
+ASTO IND 03
+1
+STO+ 03
+"0000[xC0][xC0]"
+ASTO IND 03
+1
+STO+ 03
+"[x00][x00][x0F][x0F]33"
+ASTO IND 03
+1
+STO+ 03
+"3333[x03][x03]"
+ASTO IND 03
+1
+STO+ 03
+"[x00][x00][xC0][xC0][xFC][xFC]"
+ASTO IND 03
+1
+STO+ 03
+CLA
+├"[xC3][xC3][x03][x03][x0C][x0C]"
+ASTO IND 03
+1
+STO+ 03
+"[x00][x00][x00][x00]??"
+ASTO IND 03
+1
+STO+ 03
+"[x00][x00][x00][x00][x00][x00]"
+ASTO IND 03
+1
+STO+ 03
+"[x00][x00][xF0][xF0][x0C][x0C]"
+ASTO IND 03
+1
+STO+ 03
+"[x0C][x0C][x0C][x0C][xFC][xFC]"
+ASTO IND 03
+1
+STO+ 03
+"[x00][x00][x00][x00]33"
+ASTO IND 03
+1
+STO+ 03
+"3333[x0F][x0F]"
+ASTO IND 03
+1
+STO+ 03
+"[x00][x00][xFF][xFF][xC0][xC0]"
+ASTO IND 03
+1
+STO+ 03
+"0000[xC0][xC0]"
+ASTO IND 03
+1
+STO+ 03
+"[x00][x00]??[x00][x00]"
+ASTO IND 03
+1
+STO+ 03
+"[x00][x00][x00][x00]??"
+ASTO IND 03
+1
+STO+ 03
+"[x00][x00][x00][x00][x0C][x0C]"
+ASTO IND 03
+1
+STO+ 03
+CLA
+├"[xFF][xFF][x00][x00][x00][x00]"
+ASTO IND 03
+1
+STO+ 03
+"[x00][x00][x00][x00]00"
+ASTO IND 03
+1
+STO+ 03
+"??00[x00][x00]"
+ASTO IND 03
+1
+STO+ 03
+"[x00][x00][x0C][x0C][x03][x03]"
+ASTO IND 03
+1
+STO+ 03
+"[x03][x03][xC3][xC3]<<"
+ASTO IND 03
+1
+STO+ 03
+"[x00][x00]00<<"
+ASTO IND 03
+1
+STO+ 03
+"330000"
+ASTO IND 03
+1
+STO+ 03
+"[x00][x00][x03][x03][xC3][xC3]"
+ASTO IND 03
+1
+STO+ 03
+CLA
+├"[xC3][xC3][xC3][xC3]<<"
+ASTO IND 03
+1
+STO+ 03
+"[x00][x00]0000"
+ASTO IND 03
+1
+STO+ 03
+"0000[x0F][x0F]"
+ASTO IND 03
+1
+STO+ 03
+"[x00][x00][xC0][xC0]00"
+ASTO IND 03
+1
+STO+ 03
+"[x0C][x0C][xFF][xFF][x00][x00]"
+ASTO IND 03
+1
+STO+ 03
+"[x00][x00][x03][x03][x03][x03]"
+ASTO IND 03
+1
+STO+ 03
+"[x03][x03]??[x03][x03]"
+ASTO IND 03
+1
+STO+ 03
+"[x00][x00]??33"
+ASTO IND 03
+1
+STO+ 03
+"3333[xC3][xC3]"
+ASTO IND 03
+1
+STO+ 03
+"[x00][x00][x0C][x0C]00"
+ASTO IND 03
+1
+STO+ 03
+"0000[x0F][x0F]"
+ASTO IND 03
+1
+STO+ 03
+"[x00][x00][xF0][xF0][xCC][xCC]"
+ASTO IND 03
+1
+STO+ 03
+CLA
+├"[xC3][xC3][xC3][xC3][x00][x00]"
+ASTO IND 03
+1
+STO+ 03
+"[x00][x00][x0F][x0F]00"
+ASTO IND 03
+1
+STO+ 03
+"0000[x0F][x0F]"
+ASTO IND 03
+1
+STO+ 03
+"[x00][x00][x03][x03][x03][x03]"
+ASTO IND 03
+1
+STO+ 03
+CLA
+├"[xC3][xC3]33[x0F][x0F]"
+ASTO IND 03
+1
+STO+ 03
+"[x00][x00][x00][x00]??"
+ASTO IND 03
+1
+STO+ 03
+"[x00][x00][x00][x00][x00][x00]"
+ASTO IND 03
+1
+STO+ 03
+"[x00][x00]<<[xC3][xC3]"
+ASTO IND 03
+1
+STO+ 03
+CLA
+├"[xC3][xC3][xC3][xC3]<<"
+ASTO IND 03
+1
+STO+ 03
+"[x00][x00][x0F][x0F]00"
+ASTO IND 03
+1
+STO+ 03
+"0000[x0F][x0F]"
+ASTO IND 03
+1
+STO+ 03
+RTN
+LBL 61
+RCL 13
+15
+X≤Y?
+GTO 75
+RCL 13
+7
+X≤Y?
+GTO 68
+RCL 13
+3
+X≤Y?
+GTO 64
+RCL 13
+1
+X≤Y?
+GTO 62
+GTO 89
+LBL 62
+RCL 13
+2
+X≤Y?
+GTO 63
+GTO 90
+LBL 63
+GTO 91
+LBL 64
+RCL 13
+5
+X≤Y?
+GTO 66
+RCL 13
+4
+X≤Y?
+GTO 65
+GTO 92
+LBL 65
+GTO 93
+LBL 66
+RCL 13
+6
+X≤Y?
+GTO 67
+GTO 94
+LBL 67
+GTO 95
+LBL 68
+RCL 13
+10
+X≤Y?
+GTO 71
+RCL 13
+8
+X≤Y?
+GTO 69
+GTO 96
+LBL 69
+RCL 13
+9
+X≤Y?
+GTO 70
+GTO 97
+LBL 70
+GTO 98
+LBL 71
+RCL 13
+13
+X≤Y?
+GTO 73
+RCL 13
+11
+X≤Y?
+GTO 72
+GTO 99
+LBL 72
+GTO A
+LBL 73
+RCL 13
+14
+X≤Y?
+GTO 74
+GTO B
+LBL 74
+GTO C
+LBL 75
+RCL 13
+22
+X≤Y?
+GTO 82
+RCL 13
+18
+X≤Y?
+GTO 78
+RCL 13
+16
+X≤Y?
+GTO 76
+GTO D
+LBL 76
+RCL 13
+17
+X≤Y?
+GTO 77
+GTO E
+LBL 77
+GTO F
+LBL 78
+RCL 13
+20
+X≤Y?
+GTO 80
+RCL 13
+19
+X≤Y?
+GTO 79
+GTO G
+LBL 79
+GTO H
+LBL 80
+RCL 13
+21
+X≤Y?
+GTO 81
+GTO I
+LBL 81
+GTO J
+LBL 82
+RCL 13
+25
+X≤Y?
+GTO 85
+RCL 13
+23
+X≤Y?
+GTO 83
+GTO a
+LBL 83
+RCL 13
+24
+X≤Y?
+GTO 84
+GTO b
+LBL 84
+GTO c
+LBL 85
+RCL 13
+27
+X≤Y?
+GTO 87
+RCL 13
+26
+X≤Y?
+GTO 86
+GTO d
+LBL 86
+GTO e
+LBL 87
+RCL 13
+28
+X≤Y?
+GTO 88
+GTO 00
+LBL 88
+GTO 01
+LBL 89
+CLA
+├"[x80][xC0][xD0][xF8][xF8][xD0][xC0][x80]"
+RCL 51
+RCL 52
+9
++
+AGRAPH
+"[x1C]>~[xFE][xFE][xFD][xFD][xFF][xFF][xFF][xFF][xFD][xFD][xFE][xFE]"
+├"~>[x18]"
+RCL 51
+8
++
+RCL 52
+4
++
+AGRAPH
+"[x18][x1C][x1F][x1F][x1F][x1F][x1F][x1F][x1F][x1F][x1F][x1F][x1C][x18]"
+RCL 51
+16
++
+RCL 52
+6
++
+AGRAPH
+RTN
+LBL 90
+"U[x00]U[x00]U[x00]U[x00][x15][x80][xC5][xD0][xF9][xF8][xD1]"
+├"[xC0][x95][x00]U[x00]U[x00]U[x00]U"
+RCL 51
+RCL 52
+AGRAPH
+"U[x00]U[x00][x1C]>~[xFE][xFE][xFD][xFD][xFF][xFF][xFF][xFF]"
+├"[xFD][xFD][xFE][xFE]~>[x18]A[x00]U"
+RCL 51
+8
++
+RCL 52
+AGRAPH
+"U[x00]U[x00]U[x00]X[x1C]_[x1F]_[x1F]_[x1F]_"
+├"[x1F]_[x1F]\[x18]A[x00]U[x00]U"
+RCL 51
+16
++
+RCL 52
+AGRAPH
+"[x01][x00][x01][x00][x01][x00][x01][x00][x01][x00][x01][x00][x01][x00][x01]"
+├"[x00][x01][x00][x01][x00][x01][x00][x01][x00][x01]"
+RCL 51
+24
++
+RCL 52
+AGRAPH
+RTN
+LBL 91
+"0[xF0][x80][x00][x00][x00][xC0][xF0][xF0][xC0][x00][x00][x00][x80][xF0]"
+├"0"
+RCL 51
+RCL 52
+5
++
+AGRAPH
+"[x03][x1F]~[xFC][xFE][xFF][xFF][xFF][xFF][xFE][xFC]~[x1F][x03]"
+RCL 51
+8
++
+RCL 52
+6
++
+AGRAPH
+"[x18][x1C][x1E][x1F][x1F][x1F][x1F][x1F][x1F][x1F][x1F][x1F][x1F][x1E][x1C]"
+├"[x18]"
+RCL 51
+16
++
+RCL 52
+5
++
+AGRAPH
+RTN
+LBL 92
+"U[x00]U[x00][x05]0[xF5][x80][x15][x00][x15][xC0][xF5][xF0][xC5]"
+├"[x00]U[x00][x85][xF0]5[x00]U[x00]U"
+RCL 51
+RCL 52
+AGRAPH
+"U[x00]U[x00]U[x00]C[x1F]~[xFC][xFE][xFF][xFF][xFF][xFF]"
+├"[xFE][xFC]~[x1F][x03]P[x00]U[x00]U"
+RCL 51
+8
++
+RCL 52
+AGRAPH
+"U[x00]U[x00]A[x18]\[x1E]_[x1F]_[x1F]_[x1F]_"
+├"[x1F]_[x1F]^[x1C]Y[x00]U[x00]U"
+RCL 51
+16
++
+RCL 52
+AGRAPH
+"[x01][x00][x01][x00][x01][x00][x01][x00][x01][x00][x01][x00][x01][x00][x01]"
+├"[x00][x01][x00][x01][x00][x01][x00][x01][x00][x01]"
+RCL 51
+24
++
+RCL 52
+AGRAPH
+RTN
+LBL 93
+CLA
+├"[xF0][xF0][xF0][x80][x80][xF0][xF0][xF0][xF0][x80][x80][xF0][xF0][xF0]"
+RCL 51
+RCL 52
+6
++
+AGRAPH
+"[x01][x03][xFF][xFF][xFF][xFF][xFF][xFF][xFF][xFF][xFF][xFF][x03][x01]"
+RCL 51
+8
++
+RCL 52
+6
++
+AGRAPH
+"[x18][x1C][x1E][x1F][x1F][x1F][x1F][x1F][x1F][x1F][x1F][x1F][x1F][x1E][x1C]"
+├"[x18]"
+RCL 51
+16
++
+RCL 52
+5
++
+AGRAPH
+RTN
+LBL 94
+"U[x00]U[x00]U[x00][xF5][xF0][xF5][x80][x85][xF0][xF5][xF0][xF5]"
+├"[x80][x85][xF0][xF5][xF0][x05][x00]U[x00]U"
+RCL 51
+RCL 52
+AGRAPH
+"U[x00]U[x00]U[x00]Q[x03][xFF][xFF][xFF][xFF][xFF][xFF][xFF]"
+├"[xFF][xFF][xFF][x03][x01]T[x00]U[x00]U"
+RCL 51
+8
++
+RCL 52
+AGRAPH
+"U[x00]U[x00]A[x18]\[x1E]_[x1F]_[x1F]_[x1F]_"
+├"[x1F]_[x1F]^[x1C]Y[x00]U[x00]U"
+RCL 51
+16
++
+RCL 52
+AGRAPH
+"[x01][x00][x01][x00][x01][x00][x01][x00][x01][x00][x01][x00][x01][x00][x01]"
+├"[x00][x01][x00][x01][x00][x01][x00][x01][x00][x01]"
+RCL 51
+24
++
+RCL 52
+AGRAPH
+RTN
+LBL 95
+CLA
+├"[xC0][xE0][xF0]x[xB8][xF0][xE0][xC0]"
+RCL 51
+RCL 52
+9
++
+AGRAPH
+"[x07][x8F][xDD][xFE][xFF][xFF][xFF][xDF][x8F][x07]"
+RCL 51
+8
++
+RCL 52
+8
++
+AGRAPH
+"[x18][x18][x1C][x1C][x1F][x1F][x1F][x1F][x1F][x1F][x1C][x1C][x18][x18]"
+RCL 51
+16
++
+RCL 52
+6
++
+AGRAPH
+RTN
+LBL 96
+"U[x00]U[x00]U[x00]U[x00][x15][xC0][xE5][xF0]y[xB8][xF1]"
+├"[xE0][xC5][x00]U[x00]U[x00]U[x00]U"
+RCL 51
+RCL 52
+AGRAPH
+"U[x00]U[x00]U[x00]U[x00][x07][x8F][xDD][xFE][xFF][xFF][xFF]"
+├"[xDF][x8F][x07]P[x00]U[x00]U[x00]U"
+RCL 51
+8
++
+RCL 52
+AGRAPH
+"U[x00]U[x00]U[x00]Y[x18]\[x1C]_[x1F]_[x1F]_"
+├"[x1F]\[x1C]Y[x18]A[x00]U[x00]U"
+RCL 51
+16
++
+RCL 52
+AGRAPH
+"[x01][x00][x01][x00][x01][x00][x01][x00][x01][x00][x01][x00][x01][x00][x01]"
+├"[x00][x01][x00][x01][x00][x01][x00][x01][x00][x01]"
+RCL 51
+24
++
+RCL 52
+AGRAPH
+RTN
+LBL 97
+CLA
+├"[x80][xC0][xE0][xF0][xE0][xE0][xF0][xE0][xE0][xE0][xC0][x80]"
+RCL 51
+RCL 52
+7
++
+AGRAPH
+"[x0C][x1E]??[x1F][x9F][xCF][xEF][xFF][xFE][xFF][xFF][xFF][xFF][xFF]"
+├"[xFC]p"
+RCL 51
+8
++
+RCL 52
+4
++
+AGRAPH
+"08???????????80"
+RCL 51
+16
++
+RCL 52
+6
++
+AGRAPH
+RTN
+LBL 98
+"U[x00]U[x00]U[x00][x15][x80][xC5][xE0][xF5][xE0][xE5][xF0][xE5]"
+├"[xE0][xE5][xC0][x95][x00]U[x00]U[x00]U"
+RCL 51
+RCL 52
+AGRAPH
+"U[x00]U[x00]L[x1E]??[x1F][x9F][xCF][xEF][xFF][xFE][xFF]"
+├"[xFF][xFF][xFF][xFF][xFC]q[x00]U[x00]U"
+RCL 51
+8
++
+RCL 52
+AGRAPH
+"U[x00]U[x00]U[x00]18???????"
+├"????80[x00]U[x00]U"
+RCL 51
+16
++
+RCL 52
+AGRAPH
+"[x01][x00][x01][x00][x01][x00][x01][x00][x01][x00][x01][x00][x01][x00][x01]"
+├"[x00][x01][x00][x01][x00][x01][x00][x01][x00][x01]"
+RCL 51
+24
++
+RCL 52
+AGRAPH
+RTN
+LBL 99
+CLA
+├"[x80][xC0][xC0][xC0][xC0][x80]"
+RCL 51
+RCL 52
+10
++
+AGRAPH
+CLA
+├"[x90][xFB][xFF][xFF][xFF][xFF][xFB][x90]"
+RCL 51
+8
++
+RCL 52
+9
++
+AGRAPH
+"[x18][x1E][x1F][x1F][x1F][x1F][x1F][x1F][x1F][x1F][x1F][x1F][x1E][x18]"
+RCL 51
+16
++
+RCL 52
+6
++
+AGRAPH
+RTN
+LBL A
+"U[x00]U[x00]U[x00]U[x00]U[x00][x95][xC0][xD5][xC0][xD5]"
+├"[x80][x15][x00]U[x00]U[x00]U[x00]U"
+RCL 51
+RCL 52
+AGRAPH
+"U[x00]U[x00]U[x00]U[x00][x05][x90][xFB][xFF][xFF][xFF][xFF]"
+├"[xFB][x90][x00]U[x00]U[x00]U[x00]U"
+RCL 51
+8
++
+RCL 52
+AGRAPH
+"U[x00]U[x00]U[x00]X[x1E]_[x1F]_[x1F]_[x1F]_"
+├"[x1F]_[x1F]^[x18]A[x00]U[x00]U"
+RCL 51
+16
++
+RCL 52
+AGRAPH
+"[x01][x00][x01][x00][x01][x00][x01][x00][x01][x00][x01][x00][x01][x00][x01]"
+├"[x00][x01][x00][x01][x00][x01][x00][x01][x00][x01]"
+RCL 51
+24
++
+RCL 52
+AGRAPH
+RTN
+LBL B
+"U[x00]U[x00]U[x00]U[x00]U[x00]U[x00]U[x00]U"
+├"[x00]U[x00]U[x00]U[x00]U[x00]U"
+RCL 51
+RCL 52
+AGRAPH
+"U[x00]U[x00]U[x00]U[x00]U[x00]U[x00]U[x00]U"
+├"[x00]U[x00]U[x00]U[x00]U[x00]U"
+RCL 51
+8
++
+RCL 52
+AGRAPH
+"U[x00]U[x00]U[x00]U[x00]U[x00]U[x00]U[x00]U"
+├"[x00]U[x00]U[x00]U[x00]U[x00]U"
+RCL 51
+16
++
+RCL 52
+AGRAPH
+"[x01][x00][x01][x00][x01][x00][x01][x00][x01][x00][x01][x00][x01][x00][x01]"
+├"[x00][x01][x00][x01][x00][x01][x00][x01][x00][x01]"
+RCL 51
+24
++
+RCL 52
+AGRAPH
+RTN
+LBL C
+CLA
+├"[x80]@@@@[x80]"
+RCL 51
+RCL 52
+10
++
+AGRAPH
+CLA
+├"[x90]k[x04][x00][x00][x04]k[x90]"
+RCL 51
+8
++
+RCL 52
+9
++
+AGRAPH
+"[x18][x16][x11][x10][x10][x10][x10][x10][x10][x10][x10][x11][x16][x18]"
+RCL 51
+16
++
+RCL 52
+6
++
+AGRAPH
+RTN
+LBL D
+"U[x00]U[x00]U[x00]U[x00]U[x00][x95]@U@U"
+├"[x80][x15][x00]U[x00]U[x00]U[x00]U"
+RCL 51
+RCL 52
+AGRAPH
+"U[x00]U[x00]U[x00]U[x00][x05][x90]k[x04][x00][x00][x04]"
+├"k[x90][x00]U[x00]U[x00]U[x00]U"
+RCL 51
+8
++
+RCL 52
+AGRAPH
+"U[x00]U[x00]U[x00]X[x16]Q[x10]P[x10]P[x10]P"
+├"[x10]P[x11]V[x18]A[x00]U[x00]U"
+RCL 51
+16
++
+RCL 52
+AGRAPH
+"[x01][x00][x01][x00][x01][x00][x01][x00][x01][x00][x01][x00][x01][x00][x01]"
+├"[x00][x01][x00][x01][x00][x01][x00][x01][x00][x01]"
+RCL 51
+24
++
+RCL 52
+AGRAPH
+RTN
+LBL E
+CLA
+├"[x80]@ [x10]  [x90]   @[x80]"
+RCL 51
+RCL 52
+7
++
+AGRAPH
+"[x0C][x12]! [x10][x90]H([x11][x02][x01][x00][x00][x00][x03]"
+├"[x8C]p"
+RCL 51
+8
++
+RCL 52
+4
++
+AGRAPH
+"0('         '(0"
+RCL 51
+16
++
+RCL 52
+6
++
+AGRAPH
+RTN
+LBL F
+"U[x00]U[x00]U[x00][x15][x80]E [x15] %[x90]%"
+├" %@[x95][x00]U[x00]U[x00]U"
+RCL 51
+RCL 52
+AGRAPH
+"U[x00]U[x00]L[x12]! [x10][x90]H([x11][x02][x01]"
+├"[x00][x00][x00][x03][x8C]q[x00]U[x00]U"
+RCL 51
+8
++
+RCL 52
+AGRAPH
+"U[x00]U[x00]U[x00]1('      "
+├"   '(0[x00]U[x00]U"
+RCL 51
+16
++
+RCL 52
+AGRAPH
+"[x01][x00][x01][x00][x01][x00][x01][x00][x01][x00][x01][x00][x01][x00][x01]"
+├"[x00][x01][x00][x01][x00][x01][x00][x01][x00][x01]"
+RCL 51
+24
++
+RCL 52
+AGRAPH
+RTN
+LBL G
+CLA
+├"[xC0] [x90]H[xA8]P [xC0]"
+RCL 51
+RCL 52
+9
++
+AGRAPH
+"[x07][x8A]U[x22][x01][x00] P[x88][x07]"
+RCL 51
+8
++
+RCL 52
+8
++
+AGRAPH
+"[x18][x18][x14][x14][x13][x10][x10][x10][x10][x13][x14][x14][x18][x18]"
+RCL 51
+16
++
+RCL 52
+6
++
+AGRAPH
+RTN
+LBL H
+"U[x00]U[x00]U[x00]U[x00][x15][xC0]%[x90]I[xA8]Q"
+├" [xC5][x00]U[x00]U[x00]U[x00]U"
+RCL 51
+RCL 52
+AGRAPH
+"U[x00]U[x00]U[x00]U[x00][x07][x8A]U[x22][x01][x00] "
+├"P[x88][x07]P[x00]U[x00]U[x00]U"
+RCL 51
+8
++
+RCL 52
+AGRAPH
+"U[x00]U[x00]U[x00]Y[x18]T[x14]S[x10]P[x10]P"
+├"[x13]T[x14]Y[x18]A[x00]U[x00]U"
+RCL 51
+16
++
+RCL 52
+AGRAPH
+"[x01][x00][x01][x00][x01][x00][x01][x00][x01][x00][x01][x00][x01][x00][x01]"
+├"[x00][x01][x00][x01][x00][x01][x00][x01][x00][x01]"
+RCL 51
+24
++
+RCL 52
+AGRAPH
+RTN
+LBL I
+CLA
+├"[xF0][x10]p[x80][x80]p[x10][x10]p[x80][x80]p[x10][xF0]"
+RCL 51
+RCL 52
+6
++
+AGRAPH
+"[x01][x02][xFC][x00][x00][x00][x00][x00][x00][x00][x00][xFC][x02][x01]"
+RCL 51
+8
++
+RCL 52
+6
++
+AGRAPH
+"[x18][x14][x12][x11][x10][x10][x10][x10][x10][x10][x10][x10][x11][x12][x14]"
+├"[x18]"
+RCL 51
+16
++
+RCL 52
+5
++
+AGRAPH
+RTN
+LBL J
+"U[x00]U[x00]U[x00][xF5][x10]u[x80][x85]p[x15][x10]u"
+├"[x80][x85]p[x15][xF0][x05][x00]U[x00]U"
+RCL 51
+RCL 52
+AGRAPH
+"U[x00]U[x00]U[x00]Q[x02][xFC][x00][x00][x00][x00][x00][x00]"
+├"[x00][x00][xFC][x02][x01]T[x00]U[x00]U"
+RCL 51
+8
++
+RCL 52
+AGRAPH
+"U[x00]U[x00]A[x18]T[x12]Q[x10]P[x10]P[x10]P"
+├"[x10]P[x11]R[x14]Y[x00]U[x00]U"
+RCL 51
+16
++
+RCL 52
+AGRAPH
+"[x01][x00][x01][x00][x01][x00][x01][x00][x01][x00][x01][x00][x01][x00][x01]"
+├"[x00][x01][x00][x01][x00][x01][x00][x01][x00][x01]"
+RCL 51
+24
++
+RCL 52
+AGRAPH
+RTN
+LBL a
+"0[xF0][x80][x00][x00][x00][xC0]00[xC0][x00][x00][x00][x80][xF0]"
+├"0"
+RCL 51
+RCL 52
+5
++
+AGRAPH
+"[x03][x1D]b[x84][x02][x01][x00][x00][x01][x02][x84]b[x1D][x03]"
+RCL 51
+8
++
+RCL 52
+6
++
+AGRAPH
+"[x18][x14][x12][x11][x10][x10][x10][x10][x10][x10][x10][x10][x11][x12][x14]"
+├"[x18]"
+RCL 51
+16
++
+RCL 52
+5
++
+AGRAPH
+RTN
+LBL b
+"U[x00]U[x00][x05]0[xF5][x80][x15][x00][x15][xC0]50[xC5]"
+├"[x00]U[x00][x85][xF0]5[x00]U[x00]U"
+RCL 51
+RCL 52
+AGRAPH
+"U[x00]U[x00]U[x00]C[x1D]b[x84][x02][x01][x00][x00][x01]"
+├"[x02][x84]b[x1D][x03]P[x00]U[x00]U"
+RCL 51
+8
++
+RCL 52
+AGRAPH
+"U[x00]U[x00]A[x18]T[x12]Q[x10]P[x10]P[x10]P"
+├"[x10]P[x11]R[x14]Y[x00]U[x00]U"
+RCL 51
+16
++
+RCL 52
+AGRAPH
+"[x01][x00][x01][x00][x01][x00][x01][x00][x01][x00][x01][x00][x01][x00][x01]"
+├"[x00][x01][x00][x01][x00][x01][x00][x01][x00][x01]"
+RCL 51
+24
++
+RCL 52
+AGRAPH
+RTN
+LBL c
+CLA
+├"[x80]@P((P@[x80]"
+RCL 51
+RCL 52
+9
++
+AGRAPH
+"[x1C][x22]B[x82][x02][x05][x05][x02][x00][x00][x02][x05][x05][x02][x82]"
+├"B&[x18]"
+RCL 51
+8
++
+RCL 52
+4
++
+AGRAPH
+"[x18][x14][x13][x10][x10][x10][x10][x10][x10][x10][x10][x13][x14][x18]"
+RCL 51
+16
++
+RCL 52
+6
++
+AGRAPH
+RTN
+LBL d
+"U[x00]U[x00]U[x00]U[x00][x15][x80]EP)(Q"
+├"@[x95][x00]U[x00]U[x00]U[x00]U"
+RCL 51
+RCL 52
+AGRAPH
+"U[x00]U[x00][x1C][x22]B[x82][x02][x05][x05][x02][x00][x00][x02]"
+├"[x05][x05][x02][x82]B&[x18]A[x00]U"
+RCL 51
+8
++
+RCL 52
+AGRAPH
+"U[x00]U[x00]U[x00]X[x14]S[x10]P[x10]P[x10]P"
+├"[x10]P[x13]T[x18]A[x00]U[x00]U"
+RCL 51
+16
++
+RCL 52
+AGRAPH
+"[x01][x00][x01][x00][x01][x00][x01][x00][x01][x00][x01][x00][x01][x00][x01]"
+├"[x00][x01][x00][x01][x00][x01][x00][x01][x00][x01]"
+RCL 51
+24
++
+RCL 52
+AGRAPH
+RTN
+LBL e
+CLA
+├"[xFF][xFF][x03][x03][x03][x03][x03][x03][x03][x03][x03][x03][x03][x03]"
+├"[x03][x03][x03][x03][x03][x03][x03][x03][x03][x03][xFF][xFF]"
+RCL 51
+RCL 52
+AGRAPH
+CLA
+├"[xFF][xFF][x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][x00]"
+├"[x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][xFF][xFF]"
+RCL 51
+8
++
+RCL 52
+AGRAPH
+CLA
+├"[xFF][xFF][x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][x00]"
+├"[x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][xFF][xFF]"
+RCL 51
+16
++
+RCL 52
+AGRAPH
+"[x03][x03][x03][x03][x03][x03][x03][x03][x03][x03][x03][x03][x03][x03][x03]"
+├"[x03][x03][x03][x03][x03][x03][x03][x03][x03][x03][x03]"
+RCL 51
+24
++
+RCL 52
+AGRAPH
+RTN
+LBL 00
+CLA
+├"[x7F][x7F][x03][x03][x03][x03][x03][x00][x00][x00][x00][x00][x00][x00]"
+├"[x00][x00][x00][x00][x00][x03][x03][x03][x03][x03][x7F][x7F]"
+RCL 51
+RCL 52
+AGRAPH
+CLA
+├"[xF8][xF8][x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][x00]"
+├"[x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][xF8][xF8]"
+RCL 51
+16
++
+RCL 52
+AGRAPH
+"[x03][x03][x03][x03][x03][x03][x03][x00][x00][x00][x00][x00][x00][x00][x00]"
+├"[x00][x00][x00][x00][x03][x03][x03][x03][x03][x03][x03]"
+RCL 51
+24
++
+RCL 52
+AGRAPH
+RTN
+LBL 01
+"08[x18][x00][x00][x18][x18][x00][x00][x18][x18][x00][x00][x18][x18]"
+├"[x00][x00][x18]80"
+RCL 51
+RCL 52
+3
++
+AGRAPH
+"33[x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][x00][x00]"
+├"[x00][x00][x00]33"
+RCL 51
+8
++
+RCL 52
+3
++
+AGRAPH
+"3s`[x00][x00]``[x00][x00]``[x00][x00]``"
+├"[x00][x00]`s3"
+RCL 51
+16
++
+RCL 52
+3
++
+AGRAPH
+RTN
+END
